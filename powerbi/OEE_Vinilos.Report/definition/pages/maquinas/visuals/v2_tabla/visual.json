@@ -1,0 +1,107 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v2_tabla",
+  "position": {
+    "x": 820,
+    "y": 160,
+    "z": 0,
+    "width": 420,
+    "height": 300,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_maquina"
+                    }
+                  },
+                  "Property": "codigo"
+                }
+              },
+              "queryRef": "dim_maquina.codigo",
+              "nativeQueryRef": "codigo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "OEE %"
+                }
+              },
+              "queryRef": "_Medidas.OEE %",
+              "nativeQueryRef": "OEE %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Disponibilidad %"
+                }
+              },
+              "queryRef": "_Medidas.Disponibilidad %",
+              "nativeQueryRef": "Disponibilidad %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Rendimiento %"
+                }
+              },
+              "queryRef": "_Medidas.Rendimiento %",
+              "nativeQueryRef": "Rendimiento %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "MTBF (h)"
+                }
+              },
+              "queryRef": "_Medidas.MTBF (h)",
+              "nativeQueryRef": "MTBF (h)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "MTTR (h)"
+                }
+              },
+              "queryRef": "_Medidas.MTTR (h)",
+              "nativeQueryRef": "MTTR (h)"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

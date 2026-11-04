@@ -1,0 +1,65 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v4_ref",
+  "position": {
+    "x": 640,
+    "y": 20,
+    "z": 0,
+    "width": 600,
+    "height": 300,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_referencia"
+                    }
+                  },
+                  "Property": "referencia_natural"
+                }
+              },
+              "queryRef": "dim_referencia.referencia_natural",
+              "nativeQueryRef": "referencia_natural"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "OEE Referencia %"
+                }
+              },
+              "queryRef": "_Medidas.OEE Referencia %",
+              "nativeQueryRef": "OEE Referencia %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Pacas Producidas"
+                }
+              },
+              "queryRef": "_Medidas.Pacas Producidas",
+              "nativeQueryRef": "Pacas Producidas"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

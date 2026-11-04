@@ -1,0 +1,93 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v3_tabla",
+  "position": {
+    "x": 780,
+    "y": 160,
+    "z": 0,
+    "width": 460,
+    "height": 350,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_codigo_paro"
+                    }
+                  },
+                  "Property": "codigo"
+                }
+              },
+              "queryRef": "dim_codigo_paro.codigo",
+              "nativeQueryRef": "codigo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_codigo_paro"
+                    }
+                  },
+                  "Property": "nombre"
+                }
+              },
+              "queryRef": "dim_codigo_paro.nombre",
+              "nativeQueryRef": "nombre"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Horas Paro"
+                }
+              },
+              "queryRef": "_Medidas.Horas Paro",
+              "nativeQueryRef": "Horas Paro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Eventos Paro"
+                }
+              },
+              "queryRef": "_Medidas.Eventos Paro",
+              "nativeQueryRef": "Eventos Paro"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Pareto % Acumulado"
+                }
+              },
+              "queryRef": "_Medidas.Pareto % Acumulado",
+              "nativeQueryRef": "Pareto % Acumulado"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v1_texto",
+  "position": {
+    "x": 20,
+    "y": 490,
+    "z": 0,
+    "width": 1220,
+    "height": 200,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "OEE = Disponibilidad × Rendimiento × Calidad. Meta 75 %, clase mundial 85 %. La calidad se asume 100 % porque la fuente no captura rechazos. Usar los slicers de año y máquina para explorar."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

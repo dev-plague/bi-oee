@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v2_cobertura",
+  "position": {
+    "x": 20,
+    "y": 480,
+    "z": 0,
+    "width": 1220,
+    "height": 180,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "barChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_maquina"
+                    }
+                  },
+                  "Property": "codigo"
+                }
+              },
+              "queryRef": "dim_maquina.codigo",
+              "nativeQueryRef": "codigo"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Cobertura Referencia %"
+                }
+              },
+              "queryRef": "_Medidas.Cobertura Referencia %",
+              "nativeQueryRef": "Cobertura Referencia %"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

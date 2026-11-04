@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v3_texto",
+  "position": {
+    "x": 20,
+    "y": 530,
+    "z": 0,
+    "width": 1220,
+    "height": 150,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Drill-down: en la tabla, expandir de código a subcódigo (dim_subcodigo_paro). Drill-through: clic derecho en una causa → Examinar → Detalle de paros."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

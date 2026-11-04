@@ -1,0 +1,1200 @@
+{
+  "name": "OEE_Vinilos",
+  "compatibilityLevel": 1600,
+  "model": {
+    "culture": "es-CO",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "dataSources": [
+      {
+        "name": "PostgreSQL_oee",
+        "connectionString": "Provider=PostgreSQL;Data Source=localhost:5432;Initial Catalog=oee_bi;",
+        "impersonationMode": "impersonateServiceAccount"
+      }
+    ],
+    "tables": [
+      {
+        "name": "dim_tiempo",
+        "columns": [
+          {
+            "name": "tiempo_key",
+            "dataType": "int64",
+            "sourceColumn": "tiempo_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "fecha",
+            "dataType": "dateTime",
+            "sourceColumn": "fecha",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "anio",
+            "dataType": "int64",
+            "sourceColumn": "anio"
+          },
+          {
+            "name": "trimestre",
+            "dataType": "int64",
+            "sourceColumn": "trimestre"
+          },
+          {
+            "name": "mes",
+            "dataType": "int64",
+            "sourceColumn": "mes"
+          },
+          {
+            "name": "nombre_mes",
+            "dataType": "string",
+            "sourceColumn": "nombre_mes"
+          },
+          {
+            "name": "dia",
+            "dataType": "int64",
+            "sourceColumn": "dia"
+          },
+          {
+            "name": "dia_semana",
+            "dataType": "int64",
+            "sourceColumn": "dia_semana"
+          },
+          {
+            "name": "nombre_dia",
+            "dataType": "string",
+            "sourceColumn": "nombre_dia"
+          },
+          {
+            "name": "semana_iso",
+            "dataType": "int64",
+            "sourceColumn": "semana_iso"
+          },
+          {
+            "name": "anio_semana",
+            "dataType": "string",
+            "sourceColumn": "anio_semana"
+          },
+          {
+            "name": "periodo_anio_mes",
+            "dataType": "string",
+            "sourceColumn": "periodo_anio_mes"
+          },
+          {
+            "name": "es_fin_semana",
+            "dataType": "boolean",
+            "sourceColumn": "es_fin_semana"
+          },
+          {
+            "name": "es_festivo",
+            "dataType": "boolean",
+            "sourceColumn": "es_festivo"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_tiempo",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_tiempo\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ],
+        "dataCategory": "Time"
+      },
+      {
+        "name": "dim_maquina",
+        "columns": [
+          {
+            "name": "maquina_key",
+            "dataType": "int64",
+            "sourceColumn": "maquina_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "codigo",
+            "dataType": "string",
+            "sourceColumn": "codigo"
+          },
+          {
+            "name": "nombre",
+            "dataType": "string",
+            "sourceColumn": "nombre"
+          },
+          {
+            "name": "factor_produccion_legacy",
+            "dataType": "double",
+            "sourceColumn": "factor_produccion_legacy"
+          },
+          {
+            "name": "activa",
+            "dataType": "boolean",
+            "sourceColumn": "activa"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_maquina",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_maquina\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_turno",
+        "columns": [
+          {
+            "name": "turno_key",
+            "dataType": "int64",
+            "sourceColumn": "turno_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "codigo",
+            "dataType": "string",
+            "sourceColumn": "codigo"
+          },
+          {
+            "name": "nombre",
+            "dataType": "string",
+            "sourceColumn": "nombre"
+          },
+          {
+            "name": "hora_inicio",
+            "dataType": "string",
+            "sourceColumn": "hora_inicio"
+          },
+          {
+            "name": "hora_fin",
+            "dataType": "string",
+            "sourceColumn": "hora_fin"
+          },
+          {
+            "name": "duracion_horas",
+            "dataType": "double",
+            "sourceColumn": "duracion_horas"
+          },
+          {
+            "name": "es_nocturno",
+            "dataType": "boolean",
+            "sourceColumn": "es_nocturno"
+          },
+          {
+            "name": "es_valido",
+            "dataType": "boolean",
+            "sourceColumn": "es_valido"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_turno",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_turno\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_referencia",
+        "columns": [
+          {
+            "name": "referencia_key",
+            "dataType": "int64",
+            "sourceColumn": "referencia_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "referencia_natural",
+            "dataType": "string",
+            "sourceColumn": "referencia_natural"
+          },
+          {
+            "name": "nombre_normalizado",
+            "dataType": "string",
+            "sourceColumn": "nombre_normalizado"
+          },
+          {
+            "name": "num_colores",
+            "dataType": "int64",
+            "sourceColumn": "num_colores"
+          },
+          {
+            "name": "unidades_por_display",
+            "dataType": "int64",
+            "sourceColumn": "unidades_por_display"
+          },
+          {
+            "name": "unidades_por_paca",
+            "dataType": "int64",
+            "sourceColumn": "unidades_por_paca"
+          },
+          {
+            "name": "unidades_por_minuto_ideal",
+            "dataType": "double",
+            "sourceColumn": "unidades_por_minuto_ideal"
+          },
+          {
+            "name": "vigente_desde",
+            "dataType": "dateTime",
+            "sourceColumn": "vigente_desde",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "vigente_hasta",
+            "dataType": "dateTime",
+            "sourceColumn": "vigente_hasta",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "es_vigente",
+            "dataType": "boolean",
+            "sourceColumn": "es_vigente"
+          },
+          {
+            "name": "version",
+            "dataType": "int64",
+            "sourceColumn": "version"
+          },
+          {
+            "name": "origen",
+            "dataType": "string",
+            "sourceColumn": "origen"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_referencia",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_referencia\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_operario",
+        "columns": [
+          {
+            "name": "operario_key",
+            "dataType": "int64",
+            "sourceColumn": "operario_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "seudonimo",
+            "dataType": "string",
+            "sourceColumn": "seudonimo"
+          },
+          {
+            "name": "nombre_hash",
+            "dataType": "string",
+            "sourceColumn": "nombre_hash",
+            "isHidden": true
+          },
+          {
+            "name": "activo",
+            "dataType": "boolean",
+            "sourceColumn": "activo"
+          },
+          {
+            "name": "es_valido",
+            "dataType": "boolean",
+            "sourceColumn": "es_valido"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_operario",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_operario\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_codigo_paro",
+        "columns": [
+          {
+            "name": "codigo_key",
+            "dataType": "int64",
+            "sourceColumn": "codigo_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "codigo",
+            "dataType": "int64",
+            "sourceColumn": "codigo"
+          },
+          {
+            "name": "nombre",
+            "dataType": "string",
+            "sourceColumn": "nombre"
+          },
+          {
+            "name": "area_key",
+            "dataType": "int64",
+            "sourceColumn": "area_key",
+            "isHidden": true
+          },
+          {
+            "name": "categoria",
+            "dataType": "string",
+            "sourceColumn": "categoria"
+          },
+          {
+            "name": "es_programado",
+            "dataType": "boolean",
+            "sourceColumn": "es_programado"
+          },
+          {
+            "name": "documentado_pmto22",
+            "dataType": "boolean",
+            "sourceColumn": "documentado_pmto22"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_codigo_paro",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_codigo_paro\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_subcodigo_paro",
+        "columns": [
+          {
+            "name": "subcodigo_key",
+            "dataType": "int64",
+            "sourceColumn": "subcodigo_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "codigo_key",
+            "dataType": "int64",
+            "sourceColumn": "codigo_key",
+            "isHidden": true
+          },
+          {
+            "name": "subcodigo",
+            "dataType": "string",
+            "sourceColumn": "subcodigo"
+          },
+          {
+            "name": "nombre",
+            "dataType": "string",
+            "sourceColumn": "nombre"
+          },
+          {
+            "name": "nivel",
+            "dataType": "int64",
+            "sourceColumn": "nivel"
+          },
+          {
+            "name": "subcodigo_padre",
+            "dataType": "string",
+            "sourceColumn": "subcodigo_padre"
+          },
+          {
+            "name": "ruta",
+            "dataType": "string",
+            "sourceColumn": "ruta"
+          },
+          {
+            "name": "es_estimado",
+            "dataType": "boolean",
+            "sourceColumn": "es_estimado"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_subcodigo_paro",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"dim_subcodigo_paro\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_produccion",
+        "columns": [
+          {
+            "name": "produccion_key",
+            "dataType": "int64",
+            "sourceColumn": "produccion_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "tiempo_key",
+            "dataType": "int64",
+            "sourceColumn": "tiempo_key",
+            "isHidden": true
+          },
+          {
+            "name": "maquina_key",
+            "dataType": "int64",
+            "sourceColumn": "maquina_key",
+            "isHidden": true
+          },
+          {
+            "name": "turno_key",
+            "dataType": "int64",
+            "sourceColumn": "turno_key",
+            "isHidden": true
+          },
+          {
+            "name": "referencia_key",
+            "dataType": "int64",
+            "sourceColumn": "referencia_key",
+            "isHidden": true
+          },
+          {
+            "name": "operario_key",
+            "dataType": "int64",
+            "sourceColumn": "operario_key",
+            "isHidden": true
+          },
+          {
+            "name": "pacas_producidas",
+            "dataType": "double",
+            "sourceColumn": "pacas_producidas"
+          },
+          {
+            "name": "horas_trabajadas",
+            "dataType": "double",
+            "sourceColumn": "horas_trabajadas"
+          },
+          {
+            "name": "unidades_producidas",
+            "dataType": "double",
+            "sourceColumn": "unidades_producidas"
+          },
+          {
+            "name": "minutos_ideales",
+            "dataType": "double",
+            "sourceColumn": "minutos_ideales"
+          },
+          {
+            "name": "es_outlier",
+            "dataType": "boolean",
+            "sourceColumn": "es_outlier"
+          },
+          {
+            "name": "es_incompleto",
+            "dataType": "boolean",
+            "sourceColumn": "es_incompleto"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_produccion",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"fact_produccion\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_paro",
+        "columns": [
+          {
+            "name": "paro_key",
+            "dataType": "int64",
+            "sourceColumn": "paro_key",
+            "isHidden": true,
+            "isKey": true
+          },
+          {
+            "name": "tiempo_key",
+            "dataType": "int64",
+            "sourceColumn": "tiempo_key",
+            "isHidden": true
+          },
+          {
+            "name": "maquina_key",
+            "dataType": "int64",
+            "sourceColumn": "maquina_key",
+            "isHidden": true
+          },
+          {
+            "name": "turno_key",
+            "dataType": "int64",
+            "sourceColumn": "turno_key",
+            "isHidden": true
+          },
+          {
+            "name": "codigo_key",
+            "dataType": "int64",
+            "sourceColumn": "codigo_key",
+            "isHidden": true
+          },
+          {
+            "name": "subcodigo_key",
+            "dataType": "int64",
+            "sourceColumn": "subcodigo_key",
+            "isHidden": true
+          },
+          {
+            "name": "minutos_paro",
+            "dataType": "double",
+            "sourceColumn": "minutos_paro"
+          },
+          {
+            "name": "horas_paro",
+            "dataType": "double",
+            "sourceColumn": "horas_paro"
+          },
+          {
+            "name": "es_sin_produccion",
+            "dataType": "boolean",
+            "sourceColumn": "es_sin_produccion"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_paro",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"fact_paro\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_oee_diario_maquina",
+        "columns": [
+          {
+            "name": "tiempo_key",
+            "dataType": "int64",
+            "sourceColumn": "tiempo_key",
+            "isHidden": true
+          },
+          {
+            "name": "fecha",
+            "dataType": "dateTime",
+            "sourceColumn": "fecha",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "anio",
+            "dataType": "int64",
+            "sourceColumn": "anio"
+          },
+          {
+            "name": "mes",
+            "dataType": "int64",
+            "sourceColumn": "mes"
+          },
+          {
+            "name": "periodo_anio_mes",
+            "dataType": "string",
+            "sourceColumn": "periodo_anio_mes"
+          },
+          {
+            "name": "maquina_key",
+            "dataType": "int64",
+            "sourceColumn": "maquina_key",
+            "isHidden": true
+          },
+          {
+            "name": "maquina",
+            "dataType": "string",
+            "sourceColumn": "maquina"
+          },
+          {
+            "name": "horas_trabajadas",
+            "dataType": "double",
+            "sourceColumn": "horas_trabajadas"
+          },
+          {
+            "name": "horas_paro",
+            "dataType": "double",
+            "sourceColumn": "horas_paro"
+          },
+          {
+            "name": "horas_operativas",
+            "dataType": "double",
+            "sourceColumn": "horas_operativas"
+          },
+          {
+            "name": "horas_trabajadas_ref",
+            "dataType": "double",
+            "sourceColumn": "horas_trabajadas_ref"
+          },
+          {
+            "name": "horas_operativas_ref",
+            "dataType": "double",
+            "sourceColumn": "horas_operativas_ref"
+          },
+          {
+            "name": "pacas",
+            "dataType": "double",
+            "sourceColumn": "pacas"
+          },
+          {
+            "name": "unidades_producidas",
+            "dataType": "double",
+            "sourceColumn": "unidades_producidas"
+          },
+          {
+            "name": "minutos_ideales",
+            "dataType": "double",
+            "sourceColumn": "minutos_ideales"
+          },
+          {
+            "name": "minutos_ideales_operativos",
+            "dataType": "double",
+            "sourceColumn": "minutos_ideales_operativos"
+          },
+          {
+            "name": "eventos_paro",
+            "dataType": "int64",
+            "sourceColumn": "eventos_paro"
+          },
+          {
+            "name": "fallas",
+            "dataType": "int64",
+            "sourceColumn": "fallas"
+          },
+          {
+            "name": "horas_paro_no_programado",
+            "dataType": "double",
+            "sourceColumn": "horas_paro_no_programado"
+          },
+          {
+            "name": "registros_produccion",
+            "dataType": "int64",
+            "sourceColumn": "registros_produccion"
+          },
+          {
+            "name": "cobertura_referencia",
+            "dataType": "double",
+            "sourceColumn": "cobertura_referencia"
+          },
+          {
+            "name": "disponibilidad_total",
+            "dataType": "double",
+            "sourceColumn": "disponibilidad_total"
+          },
+          {
+            "name": "disponibilidad",
+            "dataType": "double",
+            "sourceColumn": "disponibilidad"
+          },
+          {
+            "name": "rendimiento",
+            "dataType": "double",
+            "sourceColumn": "rendimiento"
+          },
+          {
+            "name": "rendimiento_calculado",
+            "dataType": "double",
+            "sourceColumn": "rendimiento_calculado"
+          },
+          {
+            "name": "calidad",
+            "dataType": "double",
+            "sourceColumn": "calidad"
+          },
+          {
+            "name": "oee_calculado",
+            "dataType": "double",
+            "sourceColumn": "oee_calculado"
+          },
+          {
+            "name": "oee",
+            "dataType": "double",
+            "sourceColumn": "oee"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_oee_diario_maquina",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"vw_oee_diario_maquina\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "vw_mtbf_mttr",
+        "columns": [
+          {
+            "name": "fecha",
+            "dataType": "dateTime",
+            "sourceColumn": "fecha",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "anio",
+            "dataType": "int64",
+            "sourceColumn": "anio"
+          },
+          {
+            "name": "mes",
+            "dataType": "int64",
+            "sourceColumn": "mes"
+          },
+          {
+            "name": "maquina",
+            "dataType": "string",
+            "sourceColumn": "maquina"
+          },
+          {
+            "name": "maquina_key",
+            "dataType": "int64",
+            "sourceColumn": "maquina_key",
+            "isHidden": true
+          },
+          {
+            "name": "horas_operativas",
+            "dataType": "double",
+            "sourceColumn": "horas_operativas"
+          },
+          {
+            "name": "fallas",
+            "dataType": "int64",
+            "sourceColumn": "fallas"
+          },
+          {
+            "name": "horas_paro_no_programado",
+            "dataType": "double",
+            "sourceColumn": "horas_paro_no_programado"
+          },
+          {
+            "name": "mtbf_horas",
+            "dataType": "double",
+            "sourceColumn": "mtbf_horas"
+          },
+          {
+            "name": "mttr_horas",
+            "dataType": "double",
+            "sourceColumn": "mttr_horas"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "vw_mtbf_mttr",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(\"localhost:5432\", \"oee_bi\"),",
+                "    dbo = Source{[Schema=\"oee\", Item=\"vw_mtbf_mttr\"]}[Data]",
+                "in",
+                "    dbo"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "_Medidas",
+        "columns": [
+          {
+            "name": "Valor",
+            "dataType": "string",
+            "sourceColumn": "[Valor]",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "_Medidas",
+            "mode": "import",
+            "source": {
+              "type": "calculated",
+              "expression": "ROW(\"Valor\", \"\")"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "OEE %",
+            "expression": "VAR d = [Disponibilidad %]\nVAR r = [Rendimiento %]\nVAR c = [Calidad %]\nRETURN d * MIN(r, 1) * c",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "OEE con tope de rendimiento al 100 %."
+          },
+          {
+            "name": "Disponibilidad %",
+            "expression": "DIVIDE ( SUM ( vw_oee_diario_maquina[horas_operativas_ref] ), SUM ( vw_oee_diario_maquina[horas_trabajadas_ref] ) )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Horas operativas / horas trabajadas, sobre registros con referencia conocida."
+          },
+          {
+            "name": "Rendimiento %",
+            "expression": "DIVIDE ( SUM ( vw_oee_diario_maquina[unidades_producidas] ), SUM ( vw_oee_diario_maquina[minutos_ideales_operativos] ) )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Unidades producidas / unidades ideales en el tiempo operativo."
+          },
+          {
+            "name": "Calidad %",
+            "expression": "1",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "La fuente no captura rechazos; se asume 100 % y se documenta como limitación."
+          },
+          {
+            "name": "OEE YTD %",
+            "expression": "TOTALYTD ( [OEE %], dim_tiempo[fecha] )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "OEE acumulado del año."
+          },
+          {
+            "name": "OEE Año Anterior %",
+            "expression": "CALCULATE ( [OEE %], SAMEPERIODLASTYEAR ( dim_tiempo[fecha] ) )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "OEE del mismo periodo del año anterior."
+          },
+          {
+            "name": "Var OEE YoY pp",
+            "expression": "[OEE %] - [OEE Año Anterior %]",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Variación en puntos porcentuales."
+          },
+          {
+            "name": "Var OEE YoY %",
+            "expression": "DIVIDE ( [OEE %] - [OEE Año Anterior %], [OEE Año Anterior %] )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Variación relativa."
+          },
+          {
+            "name": "Horas Paro",
+            "expression": "SUM ( fact_paro[horas_paro] )",
+            "formatString": "0.0",
+            "displayFolder": "Paros",
+            "description": "Horas de paro."
+          },
+          {
+            "name": "Eventos Paro",
+            "expression": "COUNTROWS ( fact_paro )",
+            "formatString": "0",
+            "displayFolder": "Paros",
+            "description": "Número de eventos de paro."
+          },
+          {
+            "name": "MTBF (h)",
+            "expression": "DIVIDE ( SUM ( vw_mtbf_mttr[horas_operativas] ), SUM ( vw_mtbf_mttr[fallas] ) )",
+            "formatString": "0.00",
+            "displayFolder": "Mantenimiento",
+            "description": "Tiempo medio entre fallas no programadas."
+          },
+          {
+            "name": "MTTR (h)",
+            "expression": "DIVIDE ( SUM ( vw_mtbf_mttr[horas_paro_no_programado] ), SUM ( vw_mtbf_mttr[fallas] ) )",
+            "formatString": "0.00",
+            "displayFolder": "Mantenimiento",
+            "description": "Tiempo medio de reparación."
+          },
+          {
+            "name": "Unidades Producidas",
+            "expression": "SUM ( vw_oee_diario_maquina[unidades_producidas] )",
+            "formatString": "#,0",
+            "displayFolder": "Producción"
+          },
+          {
+            "name": "Pacas Producidas",
+            "expression": "SUM ( vw_oee_diario_maquina[pacas] )",
+            "formatString": "#,0",
+            "displayFolder": "Producción"
+          },
+          {
+            "name": "Cobertura Referencia %",
+            "expression": "DIVIDE ( SUM ( vw_oee_diario_maquina[horas_trabajadas_ref] ), SUM ( vw_oee_diario_maquina[horas_trabajadas] ) )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Porcentaje de horas con referencia conocida; indica confiabilidad del OEE."
+          },
+          {
+            "name": "Pareto % Acumulado",
+            "expression": "VAR actual = [Horas Paro]\nVAR total = CALCULATE ( [Horas Paro], ALLSELECTED ( dim_codigo_paro ) )\nVAR acum = CALCULATE ( [Horas Paro], FILTER ( ALLSELECTED ( dim_codigo_paro ), [Horas Paro] >= actual ) )\nRETURN DIVIDE ( acum, total )",
+            "formatString": "0.0%",
+            "displayFolder": "Paros",
+            "description": "Porcentaje acumulado para el Pareto de causas."
+          },
+          {
+            "name": "Semáforo OEE",
+            "expression": "SWITCH ( TRUE (), [OEE %] >= 0.85, \"🟢 Verde\", [OEE %] >= 0.75, \"🟡 Amarillo\", [OEE %] >= 0.60, \"🟠 Naranja\", \"🔴 Rojo\" )",
+            "formatString": "@",
+            "displayFolder": "OEE",
+            "description": "Clasificación cualitativa del OEE."
+          },
+          {
+            "name": "OEE vs Meta pp",
+            "expression": "[OEE %] - 0.75",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "Diferencia contra la meta de 75 %."
+          },
+          {
+            "name": "OEE Referencia %",
+            "expression": "DIVIDE ( SUM ( fact_produccion[unidades_producidas] ), SUM ( fact_produccion[minutos_ideales] ) )",
+            "formatString": "0.0%",
+            "displayFolder": "OEE",
+            "description": "OEE calculado a nivel de referencia (sin asignar paros)."
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "rel_oee_tiempo",
+        "fromTable": "vw_oee_diario_maquina",
+        "fromColumn": "tiempo_key",
+        "toTable": "dim_tiempo",
+        "toColumn": "tiempo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_oee_maquina",
+        "fromTable": "vw_oee_diario_maquina",
+        "fromColumn": "maquina_key",
+        "toTable": "dim_maquina",
+        "toColumn": "maquina_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_prod_tiempo",
+        "fromTable": "fact_produccion",
+        "fromColumn": "tiempo_key",
+        "toTable": "dim_tiempo",
+        "toColumn": "tiempo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_prod_maquina",
+        "fromTable": "fact_produccion",
+        "fromColumn": "maquina_key",
+        "toTable": "dim_maquina",
+        "toColumn": "maquina_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_prod_turno",
+        "fromTable": "fact_produccion",
+        "fromColumn": "turno_key",
+        "toTable": "dim_turno",
+        "toColumn": "turno_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_prod_ref",
+        "fromTable": "fact_produccion",
+        "fromColumn": "referencia_key",
+        "toTable": "dim_referencia",
+        "toColumn": "referencia_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_prod_operario",
+        "fromTable": "fact_produccion",
+        "fromColumn": "operario_key",
+        "toTable": "dim_operario",
+        "toColumn": "operario_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_paro_tiempo",
+        "fromTable": "fact_paro",
+        "fromColumn": "tiempo_key",
+        "toTable": "dim_tiempo",
+        "toColumn": "tiempo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_paro_maquina",
+        "fromTable": "fact_paro",
+        "fromColumn": "maquina_key",
+        "toTable": "dim_maquina",
+        "toColumn": "maquina_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_paro_turno",
+        "fromTable": "fact_paro",
+        "fromColumn": "turno_key",
+        "toTable": "dim_turno",
+        "toColumn": "turno_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_paro_codigo",
+        "fromTable": "fact_paro",
+        "fromColumn": "codigo_key",
+        "toTable": "dim_codigo_paro",
+        "toColumn": "codigo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_paro_subcodigo",
+        "fromTable": "fact_paro",
+        "fromColumn": "subcodigo_key",
+        "toTable": "dim_subcodigo_paro",
+        "toColumn": "subcodigo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_subcodigo_codigo",
+        "fromTable": "dim_subcodigo_paro",
+        "fromColumn": "codigo_key",
+        "toTable": "dim_codigo_paro",
+        "toColumn": "codigo_key",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_mtbf_tiempo",
+        "fromTable": "vw_mtbf_mttr",
+        "fromColumn": "fecha",
+        "toTable": "dim_tiempo",
+        "toColumn": "fecha",
+        "crossFilteringBehavior": "oneDirection"
+      },
+      {
+        "name": "rel_mtbf_maquina",
+        "fromTable": "vw_mtbf_mttr",
+        "fromColumn": "maquina_key",
+        "toTable": "dim_maquina",
+        "toColumn": "maquina_key",
+        "crossFilteringBehavior": "oneDirection"
+      }
+    ],
+    "roles": [
+      {
+        "name": "Supervisor_Vinilos_1",
+        "modelPermission": "read",
+        "tablePermissions": [
+          {
+            "name": "dim_maquina",
+            "filterExpression": "dim_maquina[codigo] = \"Vinilos_1\""
+          }
+        ]
+      },
+      {
+        "name": "Supervisor_Vinilos_2",
+        "modelPermission": "read",
+        "tablePermissions": [
+          {
+            "name": "dim_maquina",
+            "filterExpression": "dim_maquina[codigo] = \"Vinilos_2\""
+          }
+        ]
+      },
+      {
+        "name": "Supervisor_Vinilos_3",
+        "modelPermission": "read",
+        "tablePermissions": [
+          {
+            "name": "dim_maquina",
+            "filterExpression": "dim_maquina[codigo] = \"Vinilos_3\""
+          }
+        ]
+      },
+      {
+        "name": "Supervisor_Vinilos_4",
+        "modelPermission": "read",
+        "tablePermissions": [
+          {
+            "name": "dim_maquina",
+            "filterExpression": "dim_maquina[codigo] = \"Vinilos_4\""
+          }
+        ]
+      },
+      {
+        "name": "Gerencia",
+        "modelPermission": "read"
+      }
+    ]
+  }
+}

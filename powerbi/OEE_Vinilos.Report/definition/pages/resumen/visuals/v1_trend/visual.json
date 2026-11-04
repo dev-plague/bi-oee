@@ -1,0 +1,73 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "v1_trend",
+  "position": {
+    "x": 20,
+    "y": 170,
+    "z": 0,
+    "width": 780,
+    "height": 300,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tiempo"
+                    }
+                  },
+                  "Property": "periodo_anio_mes"
+                }
+              },
+              "queryRef": "dim_tiempo.periodo_anio_mes",
+              "nativeQueryRef": "periodo_anio_mes"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "OEE %"
+                }
+              },
+              "queryRef": "_Medidas.OEE %",
+              "nativeQueryRef": "OEE %"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_maquina"
+                    }
+                  },
+                  "Property": "codigo"
+                }
+              },
+              "queryRef": "dim_maquina.codigo",
+              "nativeQueryRef": "codigo"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

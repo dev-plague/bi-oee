@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>OEE Envasado — Pareto de paros (maqueta)</title>
+<style>
+  :root{--y:#F2C811;--dark:#252423;--gray:#605E5C;--light:#F3F2F1;--border:#E1DFDD;--blue:#118DFF;--red:#D83B01;--green:#107C10}
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--dark);font-family:'Segoe UI',system-ui,sans-serif}
+  .app{width:1400px;margin:0 auto;padding:18px 22px 26px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:10px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+  .brand .dot{width:26px;height:26px;background:var(--y);border-radius:5px;display:grid;place-items:center;font-size:13px;color:#000}
+  .tabs{display:flex;gap:4px;font-size:12px;color:var(--gray)}
+  .tabs span{padding:6px 12px;border-radius:4px}
+  .tabs .active{background:var(--light);color:var(--dark);font-weight:600;border-bottom:2px solid var(--y)}
+  .title{display:flex;align-items:end;justify-content:space-between;margin:14px 0 10px}
+  .title h1{font-size:20px;font-weight:600;margin:0}
+  .title .sub{font-size:11px;color:var(--gray)}
+  .grid{display:grid;grid-template-columns:1.45fr 1fr;gap:12px}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+  .panel h2{font-size:13px;font-weight:600;margin:0 0 8px}
+  .bar-row{display:grid;grid-template-columns:250px 1fr 64px;align-items:center;gap:8px;font-size:11px;margin:8px 0}
+  .bar-row .label{text-align:right;color:#252423}
+  .bar-track{background:var(--light);border-radius:2px;height:15px;overflow:hidden}
+  .bar-fill{height:15px;border-radius:2px;background:var(--y)}
+  .bar-row .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--gray)}
+  .table{width:100%;border-collapse:collapse;font-size:11px}
+  .table th{text-align:left;color:var(--gray);font-weight:600;border-bottom:1px solid var(--border);padding:7px 4px}
+  .table td{border-bottom:1px solid var(--light);padding:7px 4px;font-variant-numeric:tabular-nums}
+  .insight{font-size:12px;line-height:1.55;color:#252423}
+  .kpi{display:flex;gap:10px;margin-bottom:12px}
+  .kpi .card{flex:1;background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px 12px}
+  .kpi .label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+  .kpi .value{font-size:24px;font-weight:600;margin-top:3px}
+  .footer{margin-top:12px;font-size:10px;color:var(--gray);text-align:right}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="dot">OEE</div> Envasado · Vinilos y témperas</div>
+    <div class="tabs"><span>Resumen</span><span>Máquinas</span><span class="active">Pareto</span><span>Turnos</span><span>Detalle</span></div>
+  </div>
+
+  <div class="title">
+    <div><h1>Pareto de causas de paro · 2024</h1><div class="sub">Horas de paro por código · fuente: fact_paro + dim_codigo_paro</div></div>
+    <div class="sub">Filtro: todas las máquinas</div>
+  </div>
+
+  <div class="kpi">
+    <div class="card"><div class="label">Horas de paro 2024</div><div class="value" style="color:#A4262C">3.976 h</div></div>
+    <div class="card"><div class="label">Causas que explican 80%</div><div class="value">4 de 18</div></div>
+    <div class="card"><div class="label">Código #1</div><div class="value" style="font-size:18px">16 · Alimentación y aseo</div></div>
+    <div class="card"><div class="label">OEE 2024</div><div class="value" style="color:#7A4F01">71.0%</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>Horas de paro por causa (barras) y % acumulado (línea)</h2>
+      <div class="bar-row"><span class="label">16 · Alimentación y aseo</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="num">2.000 h</span></div>
+      <div class="bar-row"><span class="label">05 · Ajuste operativo</span><div class="bar-track"><div class="bar-fill" style="width:90.7%"></div></div><span class="num">1.814 h</span></div>
+      <div class="bar-row"><span class="label">06 · Limpieza por derrame</span><div class="bar-track"><div class="bar-fill" style="width:77.3%"></div></div><span class="num">1.546 h</span></div>
+      <div class="bar-row"><span class="label">17 · Pausa activa</span><div class="bar-track"><div class="bar-fill" style="width:35.7%"></div></div><span class="num">713 h</span></div>
+      <div class="bar-row"><span class="label">07 · Alistamiento / cambio ref.</span><div class="bar-track"><div class="bar-fill" style="width:31.0%"></div></div><span class="num">621 h</span></div>
+      <div class="bar-row"><span class="label">10 · Paro por ventaja/evacuación</span><div class="bar-track"><div class="bar-fill" style="width:17.8%"></div></div><span class="num">356 h</span></div>
+      <div class="bar-row"><span class="label">01 · Falla electromecánica</span><div class="bar-track"><div class="bar-fill" style="width:16.1%"></div></div><span class="num">323 h</span></div>
+      <div class="bar-row"><span class="label">14 · Falta de materia prima</span><div class="bar-track"><div class="bar-fill" style="width:12.7%"></div></div><span class="num">253 h</span></div>
+      <div class="bar-row"><span class="label">12 · Materia prima defectuosa</span><div class="bar-track"><div class="bar-fill" style="width:11.3%"></div></div><span class="num">227 h</span></div>
+      <div class="bar-row"><span class="label">09 · Falta de operario</span><div class="bar-track"><div class="bar-fill" style="width:9.1%"></div></div><span class="num">182 h</span></div>
+
+      <svg width="820" height="120" viewBox="0 0 820 120" style="margin-top:6px">
+        <g stroke="#E1DFDD" stroke-width="1">
+          <line x1="250" y1="15" x2="790" y2="15"/><line x1="250" y1="45" x2="790" y2="45"/>
+          <line x1="250" y1="75" x2="790" y2="75"/><line x1="250" y1="105" x2="790" y2="105"/>
+        </g>
+        <g fill="#605E5C" font-size="9" font-family="Segoe UI">
+          <text x="6" y="18">100%</text><text x="12" y="48">75%</text><text x="12" y="78">50%</text><text x="12" y="108">25%</text>
+        </g>
+        <!-- % acumulado: 24.9, 47.5, 66.7, 75.6, 83.3, 87.7, 91.7, 94.9, 97.7, 100 -->
+        <polyline fill="none" stroke="#118DFF" stroke-width="2.5" points="250,75 310,48 370,26 430,19 490,15 550,13 610,11 670,10 730,9 790,8"/>
+        <g fill="#118DFF">
+          <circle cx="250" cy="75" r="3"/><circle cx="310" cy="48" r="3"/><circle cx="370" cy="26" r="3"/><circle cx="430" cy="19" r="3"/>
+          <circle cx="490" cy="15" r="3"/><circle cx="550" cy="13" r="3"/><circle cx="610" cy="11" r="3"/><circle cx="670" cy="10" r="3"/>
+          <circle cx="730" cy="9" r="3"/><circle cx="790" cy="8" r="3"/>
+        </g>
+      </svg>
+      <div style="font-size:10px;color:#605E5C;margin-top:4px">% acumulado (eje derecho)</div>
+    </div>
+
+    <div class="panel">
+      <h2>Tabla de Pareto</h2>
+      <table class="table">
+        <tr><th>#</th><th>Código</th><th>Causa</th><th>Horas</th><th>%</th><th>% acum.</th></tr>
+        <tr><td>1</td><td>16</td><td>Alimentación y aseo</td><td>2.000</td><td>24.9%</td><td>24.9%</td></tr>
+        <tr><td>2</td><td>05</td><td>Ajuste operativo</td><td>1.814</td><td>22.6%</td><td>47.5%</td></tr>
+        <tr><td>3</td><td>06</td><td>Limpieza por derrame</td><td>1.546</td><td>19.2%</td><td>66.7%</td></tr>
+        <tr><td>4</td><td>17</td><td>Pausa activa</td><td>713</td><td>8.9%</td><td>75.6%</td></tr>
+        <tr><td>5</td><td>07</td><td>Alistamiento / cambio ref.</td><td>621</td><td>7.7%</td><td>83.3%</td></tr>
+        <tr><td>6</td><td>10</td><td>Paro por ventaja</td><td>356</td><td>4.4%</td><td>87.7%</td></tr>
+        <tr><td>7</td><td>01</td><td>Falla electromecánica</td><td>323</td><td>4.0%</td><td>91.7%</td></tr>
+        <tr><td>8</td><td>14</td><td>Falta de materia prima</td><td>253</td><td>3.2%</td><td>94.9%</td></tr>
+        <tr><td>9</td><td>12</td><td>Materia prima defectuosa</td><td>227</td><td>2.8%</td><td>97.7%</td></tr>
+        <tr><td>10</td><td>09</td><td>Falta de operario</td><td>182</td><td>2.3%</td><td>100.0%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr;margin-top:12px">
+    <div class="panel">
+      <h2>Lectura para el comité</h2>
+      <div class="insight">
+        <b>4 causas explican el 80% de las horas de paro.</b> Las dos primeras (16 y 05) son de
+        naturaleza operativa y representan el 47,5%: alimentación/aseo y ajuste operativo.
+        La tercera (06, limpieza por derrame) es evitable con prácticas de proceso. Solo el
+        9,1% corresponde a fallas electromecánicas (01 + 03 + 04), por lo que el plan debe
+        equilibrar <b>gestión operativa</b> y <b>mantenimiento</b>. Drill-down recomendado:
+        código 05 → subcódigo 5.2 (dosificación) y 5.5 (transfer).
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Maqueta de diseño con datos reales del ETL · el reporte nativo está en powerbi/OEE_Vinilos.pbip</div>
+</div>
+</body>
+</html>

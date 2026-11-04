@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pages/1.0.0/schema.json",
+  "pageOrder": [
+    "resumen",
+    "maquinas",
+    "pareto",
+    "turnos",
+    "detalle"
+  ],
+  "activePageName": "resumen"
+}
