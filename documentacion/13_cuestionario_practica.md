@@ -369,12 +369,12 @@ microparos y migrar a PLC/SCADA con TimescaleDB.
 
 ## K. Autoevaluación
 
-| Aciertos | Nivel |
+| Aciertos (de 73) | Nivel |
 |---:|---|
-| 0–15 | Repasa la guía de apropiación y las secciones A–D. |
-| 16–30 | Vas bien; refuerza métricas y modelo. |
-| 31–40 | Listo para exponer; practica el guion en voz alta. |
-| 41–50 | Puedes responder preguntas de jurado exigente. |
+| 0–25 | Repasa la guía de apropiación y las secciones A–D. |
+| 26–45 | Vas bien; refuerza métricas y modelo. |
+| 46–60 | Listo para exponer; practica el guion en voz alta. |
+| 61–73 | Puedes responder preguntas de jurado exigente. |
 
 **Consejo final:** si no sabes un número, no lo inventes. Di dónde está la
 consulta (`db/queries/…`, `audit.etl_reconciliacion`, `vw_kpi_global`) y ofrece
