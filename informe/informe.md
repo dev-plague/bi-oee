@@ -42,7 +42,7 @@ La solución habilita dos capas complementarias:
 | OEE 2025 (ene–mar) | **70,2 %** |
 | Mejor línea (OEE histórico) | **Vinilos_4: 75,5 %** |
 | Peor línea (OEE histórico) | **Vinilos_2: 33,7 %** |
-| Causas que concentran ~73 % de las horas de paro | **16, 5 y 6** |
+| Causas que concentran ~73 % de las horas de paro (2024) | **16, 5 y 6** |
 | MTBF / MTTR histórico | **2,5–3,9 h / 0,6–0,84 h** |
 | Cobertura de referencia | **52,8 % de las horas** |
 
@@ -403,7 +403,7 @@ Grafana, Power BI, docs). `docs/`, `data/raw/`, `.env` y `.pbix` están ignorado
    el rendimiento (55,8 %) es el principal cuello de botella. Revisar el estándar
    de 72 u/min y la dosificación/transfer.
 2. **Atacar las causas operativas**: 16 (alimentación/aseo), 5 (ajuste) y 6
-   (limpieza) explican ~73 % de las horas. Un plan de 5S/estándar de ajuste
+   (limpieza) explican ~73 % de las horas en 2024. Un plan de 5S/estándar de ajuste
    puede mover el OEE más que el mantenimiento correctivo.
 3. **Completar la captura de referencia y turno**: sin referencia no hay OEE
    (cobertura 52,8 % en horas). Es la mejora de datos con mayor retorno.
