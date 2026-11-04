@@ -1,12 +1,10 @@
 # Informe final — Solución de BI end-to-end para OEE en líneas de envasado
 
-<div align="center">
-
 ## OEE Envasado — Vinilos y témperas
 
 **Taller 5 · Inteligencia de Negocios**
 
-| | |
+| Campo | Valor |
 |---|---|
 | **Integrantes** | _Completar nombre 1_ <br> _Completar nombre 2_ <br> _Completar nombre 3_ |
 | **Repositorio** | `https://github.com/<usuario>/oee-envasado-bi` _(reemplazar al publicar)_ |
@@ -14,7 +12,6 @@
 | **Fuente** | `SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm` + P-MTO-22 |
 | **Stack** | PostgreSQL 16 · Python/pandas · Docker Compose · Grafana 11 · Power BI (PBIP/PBIR) |
 
-</div>
 
 ---
 
