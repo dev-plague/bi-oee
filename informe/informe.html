@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color:#252423; }
+h1 { font-size: 22pt; color:#1f1f1f; border-bottom: 3px solid #F2C811; padding-bottom:6px; }
+h2 { font-size: 15pt; color:#1f1f1f; margin-top: 22px; border-bottom:1px solid #E1DFDD; padding-bottom:3px; }
+h3 { font-size: 12pt; color:#323130; }
+table { border-collapse: collapse; width:100%; font-size: 8.8pt; margin: 8px 0 12px; }
+th { background:#F3F2F1; text-align:left; border:1px solid #D2D0CE; padding:4px 5px; }
+td { border:1px solid #E1DFDD; padding:4px 5px; vertical-align:top; }
+code, pre { font-family: Consolas, monospace; font-size:8.5pt; background:#F3F2F1; }
+pre { padding:8px; border-left:3px solid #F2C811; overflow-x:auto; white-space:pre-wrap; }
+img { max-width:100%; height:auto; border:1px solid #E1DFDD; margin:6px 0; }
+blockquote { border-left:3px solid #F2C811; margin:8px 0; padding:4px 10px; background:#FFF9E6; }
+hr { border:0; border-top:1px solid #E1DFDD; margin:18px 0; }
+h1:first-of-type { page-break-before: avoid; }
+h2 { page-break-after: avoid; }
+table, img, pre { page-break-inside: avoid; }
+</style></head><body><h1 id="informe-final-solucion-de-bi-end-to-end-para-oee-en-lineas-de-envasado">Informe final — Solución de BI end-to-end para OEE en líneas de envasado</h1>
+<h2 id="oee-envasado-vinilos-y-temperas">OEE Envasado — Vinilos y témperas</h2>
+<p><strong>Taller 5 · Inteligencia de Negocios</strong></p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Integrantes</strong></td>
+<td><em>Completar nombre 1</em> <br> <em>Completar nombre 2</em> <br> <em>Completar nombre 3</em></td>
+</tr>
+<tr>
+<td><strong>Repositorio</strong></td>
+<td><code>https://github.com/&lt;usuario&gt;/oee-envasado-bi</code> <em>(reemplazar al publicar)</em></td>
+</tr>
+<tr>
+<td><strong>Fecha</strong></td>
+<td>Noviembre de 2026</td>
+</tr>
+<tr>
+<td><strong>Fuente</strong></td>
+<td><code>SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm</code> + P-MTO-22</td>
+</tr>
+<tr>
+<td><strong>Stack</strong></td>
+<td>PostgreSQL 16 · Python/pandas · Docker Compose · Grafana 11 · Power BI (PBIP/PBIR)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="resumen-ejecutivo">Resumen ejecutivo</h2>
+<p>Se diseñó e implementó una solución de BI <strong>end-to-end y contenerizada</strong> para las
+cuatro líneas de envasado. El ETL procesa <strong>8.208 filas</strong> históricas (2022-01 a
+2025-03), detecta <strong>42 duplicados exactos</strong>, normaliza turnos, referencias,
+códigos y subcódigos, seudonimiza a las personas y carga un <strong>modelo en
+constelación</strong> en PostgreSQL. Los totales <strong>concilian al 100 %</strong> después de
+deduplicar (377.759 pacas, 37.934,35 horas trabajadas, 8.431,535 horas de paro).</p>
+<p>La solución habilita dos capas complementarias:</p>
+<ul>
+<li><strong>Grafana</strong>: tablero operativo near real-time, variables por máquina/turno,
+  estado por máquina y <strong>alerta de OEE &lt; 60 %</strong> con webhook local.</li>
+<li><strong>Power BI</strong>: modelo semántico con DAX, inteligencia de tiempo (YTD, año
+  anterior), Pareto, páginas con slicers y RLS por línea.</li>
+</ul>
+<p><strong>Resultados principales:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Indicador</th>
+<th style="text-align: right;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OEE 2024</td>
+<td style="text-align: right;"><strong>71,0 %</strong></td>
+</tr>
+<tr>
+<td>OEE 2025 (ene–mar)</td>
+<td style="text-align: right;"><strong>70,2 %</strong></td>
+</tr>
+<tr>
+<td>Mejor línea (OEE histórico)</td>
+<td style="text-align: right;"><strong>Vinilos_4: 75,5 %</strong></td>
+</tr>
+<tr>
+<td>Peor línea (OEE histórico)</td>
+<td style="text-align: right;"><strong>Vinilos_2: 33,7 %</strong></td>
+</tr>
+<tr>
+<td>Causas que concentran ~73 % de las horas de paro (2024)</td>
+<td style="text-align: right;"><strong>16, 5 y 6</strong></td>
+</tr>
+<tr>
+<td>MTBF / MTTR histórico</td>
+<td style="text-align: right;"><strong>2,5–3,9 h / 0,6–0,84 h</strong></td>
+</tr>
+<tr>
+<td>Cobertura de referencia</td>
+<td style="text-align: right;"><strong>52,8 % de las horas</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusión:</strong> la línea <strong>Vinilos_2</strong> es la prioridad (rendimiento 55,8 %); las
+mayores pérdidas son operativas (alimentación/aseo, ajuste operativo, limpieza
+por derrame), no solo fallas mecánicas. La calidad no se puede medir con la
+fuente actual: el OEE es un <strong>límite superior</strong> hasta que se capturen rechazos.</p>
+<hr />
+<h2 id="1-contexto-y-diagnostico">1. Contexto y diagnóstico</h2>
+<h3 id="11-stakeholders-y-preguntas">1.1 Stakeholders y preguntas</h3>
+<table>
+<thead>
+<tr>
+<th>Stakeholder</th>
+<th>Pregunta principal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alta dirección</td>
+<td>¿Cómo evoluciona el OEE y dónde invertir?</td>
+</tr>
+<tr>
+<td>Jefatura de Producción</td>
+<td>¿Qué turno/referencia limita el plan?</td>
+</tr>
+<tr>
+<td>Coordinación de Mantenimiento</td>
+<td>¿Cuáles son las causas raíz y el MTBF/MTTR?</td>
+</tr>
+<tr>
+<td>Supervisores</td>
+<td>¿Cómo está la línea ahora y debo intervenir?</td>
+</tr>
+<tr>
+<td>Calidad</td>
+<td>¿Cuánto tiempo se pierde por materia prima/laboratorio?</td>
+</tr>
+<tr>
+<td>TI / Datos</td>
+<td>¿El ETL concilia y es seguro?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-la-fuente">1.2 La fuente</h3>
+<p>El <code>.xlsm</code> tiene una hoja <code>Base De Datos</code> en formato <strong>ancho</strong>: 58 columnas y
+8.208 filas. Cada fila puede contener producción y hasta 18 códigos de paro.
+Hallazgos clave:</p>
+<ul>
+<li>La columna <code>Codigo de paro N</code> contiene <strong>minutos</strong>, no el código; el código
+  está implícito en la posición N. El ETL lo despivota correctamente.</li>
+<li><code>Tiempo de Paro</code> = suma de los 18 pares código/horas en el <strong>100 %</strong> de las
+  filas.</li>
+<li><strong>42 duplicados exactos</strong>, 3.051 filas hijas sin producción, 49,7 % de
+  registros sin referencia, 51,4 % sin turno, 78,3 % de eventos sin subcódigo.</li>
+<li><code>Unidad por display</code> contiene turnos en 587 filas; <code>Horas no trabajadas</code> es un
+  dato de día con semántica inconsistente; <code>Tipo de paro</code> usa una numeración
+  heredada (1–19).</li>
+<li>No hay datos de rechazo/calidad.</li>
+</ul>
+<p>El detalle completo está en <a href="../documentacion/01_diagnostico.md"><code>documentacion/01_diagnostico.md</code></a>.</p>
+<hr />
+<h2 id="2-requerimientos-y-catalogo-de-kpis">2. Requerimientos y catálogo de KPIs</h2>
+<p>Se conservan los indicadores que reporta hoy el P-MTO-22 (producción general,
+por máquina, por referencia, horas, % de códigos y análisis 01/03/05) y se
+proponen 15 KPIs nuevos. Los principales:</p>
+<table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>Fórmula</th>
+<th>Unidad</th>
+<th style="text-align: right;">Meta / alerta</th>
+<th>Usuario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OEE</strong></td>
+<td>A × P × Q</td>
+<td>%</td>
+<td style="text-align: right;">75 % / &lt; 60 %</td>
+<td>Gerencia</td>
+</tr>
+<tr>
+<td><strong>Disponibilidad</strong></td>
+<td>(horas trabajadas − paro) / horas trabajadas</td>
+<td>%</td>
+<td style="text-align: right;">85 % / &lt; 70 %</td>
+<td>Producción</td>
+</tr>
+<tr>
+<td><strong>Rendimiento</strong></td>
+<td>unidades / (minutos operativos × 72)</td>
+<td>%</td>
+<td style="text-align: right;">90 % / &lt; 75 %</td>
+<td>Producción</td>
+</tr>
+<tr>
+<td><strong>Calidad</strong></td>
+<td>unidades buenas / producidas</td>
+<td>%</td>
+<td style="text-align: right;">99 % / &lt; 97 %</td>
+<td>Calidad</td>
+</tr>
+<tr>
+<td><strong>MTBF</strong></td>
+<td>horas operativas / fallas no programadas</td>
+<td>h</td>
+<td style="text-align: right;">≥ 4 h / &lt; 2 h</td>
+<td>Mantenimiento</td>
+</tr>
+<tr>
+<td><strong>MTTR</strong></td>
+<td>horas de paro no programado / fallas</td>
+<td>h</td>
+<td style="text-align: right;">≤ 0,75 h / &gt; 1 h</td>
+<td>Mantenimiento</td>
+</tr>
+<tr>
+<td><strong>Pareto</strong></td>
+<td>horas por causa y % acumulado</td>
+<td>h / %</td>
+<td style="text-align: right;">80 % en ≤ 20 % causas</td>
+<td>Gerencia</td>
+</tr>
+<tr>
+<td><strong>Cobertura de referencia</strong></td>
+<td>horas con referencia / horas totales</td>
+<td>%</td>
+<td style="text-align: right;">≥ 90 % / &lt; 70 %</td>
+<td>TI</td>
+</tr>
+</tbody>
+</table>
+<p>El catálogo completo, con granularidad, fuente y justificación, está en
+<a href="../documentacion/02_requerimientos_kpis.md"><code>documentacion/02_requerimientos_kpis.md</code></a>.</p>
+<p><strong>Umbral de la alerta:</strong> OEE &lt; 60 % durante 1 minuto. Se justifica como
+<strong>límite de control inferior</strong> (meta 75 % − 15 pp); 85 % es clase mundial. En
+producción se recomienda 5–10 min para evitar fatiga de alertas.</p>
+<hr />
+<h2 id="3-modelo-dimensional">3. Modelo dimensional</h2>
+<h3 id="31-constelacion-y-grano">3.1 Constelación y grano</h3>
+<p>Se usa un <strong>esquema en constelación</strong> con dos hechos que comparten dimensiones
+conformadas. No se unen producción y paros en una sola tabla porque una fila de
+producción puede tener 0..18 paros y una fila hija de paro puede no tener
+producción; unirlas duplicaría pacas/horas.</p>
+<table>
+<thead>
+<tr>
+<th>Tabla</th>
+<th>Grano</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fact_produccion</code></td>
+<td>Un registro de producción (fila con pacas u horas, tras deduplicar).</td>
+</tr>
+<tr>
+<td><code>fact_paro</code></td>
+<td>Un evento de paro (fila × columna de código 1..18 con minutos &gt; 0).</td>
+</tr>
+<tr>
+<td><code>fact_produccion_hora</code></td>
+<td>Un minuto simulado × máquina (near real-time).</td>
+</tr>
+<tr>
+<td><code>vw_oee_diario_maquina</code></td>
+<td>Día × máquina.</td>
+</tr>
+<tr>
+<td><code>vw_oee_mensual_maquina</code></td>
+<td>Mes × máquina.</td>
+</tr>
+<tr>
+<td><code>vw_oee_turno</code></td>
+<td>Mes × turno.</td>
+</tr>
+<tr>
+<td><code>vw_pareto_paros</code></td>
+<td>Mes × máquina × código × subcódigo.</td>
+</tr>
+<tr>
+<td><code>vw_mtbf_mttr</code></td>
+<td>Día × máquina.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-dimensiones-y-jerarquias">3.2 Dimensiones y jerarquías</h3>
+<ul>
+<li><code>dim_tiempo</code> (construida): año → trimestre → mes → día; semana ISO; fin de semana.</li>
+<li><code>dim_maquina</code>: 4 líneas.</li>
+<li><code>dim_turno</code> (construida): T1, T2, T3, T1E, T12, T23, SD.</li>
+<li><code>dim_referencia</code> (<strong>SCD Tipo 2</strong>): unidades/paca y velocidad ideal versionadas.</li>
+<li><code>dim_operario</code> / <code>dim_personal</code>: seudónimos.</li>
+<li><code>dim_codigo_paro</code> → <code>dim_subcodigo_paro</code>: jerarquía código → subcódigo →
+  sub-subcódigo (<code>nivel</code>, <code>subcodigo_padre</code>, <code>ruta</code>).</li>
+</ul>
+<p><strong>SCD Tipo 2 en <code>dim_referencia</code>:</strong> la conversión unidades/paca puede cambiar con
+el empaque; el OEE histórico debe usar la versión vigente. Un Tipo 1 borraría la
+historia; un Tipo 3 no escala a más de dos versiones.</p>
+<h3 id="33-matriz-de-bus">3.3 Matriz de bus</h3>
+<table>
+<thead>
+<tr>
+<th>Proceso</th>
+<th style="text-align: center;">Tiempo</th>
+<th style="text-align: center;">Máquina</th>
+<th style="text-align: center;">Turno</th>
+<th style="text-align: center;">Referencia</th>
+<th style="text-align: center;">Operario</th>
+<th style="text-align: center;">Código</th>
+<th style="text-align: center;">Subcódigo</th>
+<th style="text-align: center;">Área</th>
+<th style="text-align: center;">Personal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Producción</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>Paros</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>OEE diario</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>OEE turno</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>Pareto</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>MTBF/MTTR</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>Near real-time</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p>Detalle y diagrama ER en <a href="../documentacion/03_modelo_dimensional.md"><code>documentacion/03_modelo_dimensional.md</code></a>.</p>
+<hr />
+<h2 id="4-diccionario-de-datos-y-lineage">4. Diccionario de datos y lineage</h2>
+<p>Cada tabla tiene descripción, columnas, tipos, PK/FK, regla de transformación y
+origen. Ejemplos:</p>
+<table>
+<thead>
+<tr>
+<th>Destino</th>
+<th>Origen</th>
+<th>Regla</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fact_produccion.pacas_producidas</code></td>
+<td><code>Pacas producidas</code></td>
+<td>Numérico; imputa 0 si falta; marca <code>es_incompleto</code>.</td>
+</tr>
+<tr>
+<td><code>fact_produccion.unidades_producidas</code></td>
+<td><code>pacas × unidades_por_paca</code></td>
+<td>Nulo si no hay referencia.</td>
+</tr>
+<tr>
+<td><code>fact_paro.minutos_paro</code></td>
+<td><code>Codigo de paro N</code></td>
+<td><strong>Es minutos</strong>, no código; se despivota.</td>
+</tr>
+<tr>
+<td><code>fact_paro.horas_paro</code></td>
+<td><code>Codigo N en horas</code></td>
+<td>Si falta, <code>minutos/60</code>.</td>
+</tr>
+<tr>
+<td><code>dim_operario.seudonimo</code></td>
+<td><code>Operario</code></td>
+<td><code>OP-</code> + SHA-256(salt+nombre)[:8].</td>
+</tr>
+<tr>
+<td><code>dim_referencia.unidades_por_paca</code></td>
+<td>Catálogo / regla de formato</td>
+<td>600 para 6 col 22cc, 45 para 125cc, etc.</td>
+</tr>
+<tr>
+<td><code>dim_tiempo</code></td>
+<td><code>generate_series</code></td>
+<td>Calendario 2021–2027.</td>
+</tr>
+</tbody>
+</table>
+<p>El diccionario completo está en
+<a href="../documentacion/04_diccionario_datos.md"><code>documentacion/04_diccionario_datos.md</code></a>.</p>
+<hr />
+<h2 id="5-etl-calidad-y-conciliacion">5. ETL, calidad y conciliación</h2>
+<h3 id="51-herramienta">5.1 Herramienta</h3>
+<p>Python 3.12 + pandas + openpyxl + psycopg2, en Docker. Se eligió por
+reproducibilidad, pruebas unitarias, lectura de <code>.xlsm</code> sin macros y despliegue
+con un solo comando. Alternativas (Power Query, Talend, scripts manuales) se
+descartaron por acoplamiento a Windows, sobredimensionamiento o falta de
+reproducibilidad.</p>
+<h3 id="52-reglas-y-conteos">5.2 Reglas y conteos</h3>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Bruto</th>
+<th style="text-align: right;">Después de dedup</th>
+<th style="text-align: right;">Diferencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Filas</td>
+<td style="text-align: right;">8.208</td>
+<td style="text-align: right;">8.166</td>
+<td style="text-align: right;">−42</td>
+</tr>
+<tr>
+<td>Registros de producción</td>
+<td style="text-align: right;">5.157</td>
+<td style="text-align: right;">5.137</td>
+<td style="text-align: right;">−20</td>
+</tr>
+<tr>
+<td>Eventos de paro</td>
+<td style="text-align: right;">16.532</td>
+<td style="text-align: right;">16.482</td>
+<td style="text-align: right;">−50</td>
+</tr>
+<tr>
+<td>Pacas</td>
+<td style="text-align: right;">378.778</td>
+<td style="text-align: right;">377.759</td>
+<td style="text-align: right;">−1.019</td>
+</tr>
+<tr>
+<td>Horas trabajadas</td>
+<td style="text-align: right;">38.063,35</td>
+<td style="text-align: right;">37.934,35</td>
+<td style="text-align: right;">−129,00</td>
+</tr>
+<tr>
+<td>Horas de paro</td>
+<td style="text-align: right;">8.449,65</td>
+<td style="text-align: right;">8.431,54</td>
+<td style="text-align: right;">−18,12</td>
+</tr>
+</tbody>
+</table>
+<p>Las diferencias brutas corresponden <strong>exactamente</strong> a los 42 duplicados
+(1.019 pacas, 129 h, 18,12 h). La conciliación crítica (fuente dedup vs cargado)
+da <strong>0</strong> en todas las métricas. El ETL falla si alguna métrica crítica supera
+0,01 de tolerancia.</p>
+<h3 id="53-reglas-de-calidad">5.3 Reglas de calidad</h3>
+<p>25 reglas en <code>audit.etl_quality</code>: duplicados, fechas, máquinas, negativos,
+descuadre de paro, cobertura de referencia, turno, subcódigo, outliers,
+incompletos, PII, etc. Las reglas con 0 afectadas se registran como <code>INFO</code> con
+prefijo <code>OK.</code>; las que sí tienen hallazgos quedan como <code>WARN</code> (10 en la última
+corrida).</p>
+<h3 id="54-pii">5.4 PII</h3>
+<p>Los nombres se seudonimizan con SHA-256 + sal; el texto libre se redacta con
+<code>[PERSONA]</code>. La validación <code>pii_nombres_en_staging</code> da 0. El nombre real solo
+existe en <code>data/raw</code> (ignorado).</p>
+<p>Detalle en <a href="../documentacion/05_etl_calidad.md"><code>documentacion/05_etl_calidad.md</code></a>.</p>
+<hr />
+<h2 id="6-base-de-datos-y-consultas-sql">6. Base de datos y consultas SQL</h2>
+<ul>
+<li>PostgreSQL 16, esquemas <code>oee</code>, <code>stg</code>, <code>audit</code>.</li>
+<li>DDL con PK/FK/CHECK/UNIQUE e índices para los patrones de consulta
+  (fecha, máquina+fecha, código, subcódigo, timestamp).</li>
+<li>12 consultas analíticas en <code>db/queries/</code> con <code>RANK</code>, <code>LAG</code>, <code>SUM() OVER</code>,
+  <code>AVG() OVER</code>, <code>ROW_NUMBER</code>, <code>FILTER</code>, <code>ROLLUP</code>/<code>UNION ALL</code>.</li>
+<li>Ejemplos: OEE mensual con YTD, ranking de máquinas, Pareto acumulado, top 5
+  causas por máquina, 2024 vs 2025, MTBF/MTTR, turnos, drill-down de
+  subcódigos, media móvil 7/30 días, calidad/conciliación, heatmap y OEE por
+  referencia.</li>
+</ul>
+<p>Ver <a href="../documentacion/06_consultas_sql.md"><code>documentacion/06_consultas_sql.md</code></a>.</p>
+<hr />
+<h2 id="7-tablero-operativo-en-grafana">7. Tablero operativo en Grafana</h2>
+<h3 id="71-paneles-y-variables">7.1 Paneles y variables</h3>
+<ul>
+<li>5 stat panels: OEE, disponibilidad, rendimiento, paro acumulado y alertas.</li>
+<li>Serie temporal de OEE por máquina, estado actual por máquina, Pareto,
+  minutos de paro, OEE por turno y últimas alertas.</li>
+<li>Variables <code>maquina</code> y <code>turno</code> (multivalor, All).</li>
+<li>Rango por defecto: últimos 30 minutos; Pareto/turno con override a 5 años.</li>
+</ul>
+<h3 id="72-alerta-y-simulacion">7.2 Alerta y simulación</h3>
+<ul>
+<li>4 reglas (una por máquina): <code>OEE &lt; 0,60</code> durante <code>1m</code>.</li>
+<li>Contact point webhook → <code>audit.alertas_recibidas</code>.</li>
+<li>Simulador: 1 minuto simulado cada 2 s; modos normal/degradado/paro;
+  anomalía forzable por máquina.</li>
+</ul>
+<h3 id="73-evidencias">7.3 Evidencias</h3>
+<p><img alt="Tablero operativo de Grafana" src="img/grafana_operativo.png" /></p>
+<p><img alt="Regla de alerta en estado Firing" src="img/grafana_regla.png" /></p>
+<p>La regla muestra <code>0.48708 &lt; 0.6</code> y estado <strong>Firing</strong>; el tablero muestra la
+caída de Vinilos_4 y la tabla de alertas con <code>firing</code>/<code>resolved</code>.</p>
+<p>Ver <a href="../documentacion/07_grafana.md"><code>documentacion/07_grafana.md</code></a>.</p>
+<hr />
+<h2 id="8-tablero-analitico-en-power-bi">8. Tablero analítico en Power BI</h2>
+<h3 id="81-formato-y-conexion">8.1 Formato y conexión</h3>
+<ul>
+<li><strong>PBIP + PBIR + <code>model.bim</code> (TMSL)</strong>, sin <code>.pbix</code> binario.</li>
+<li>Conexión a PostgreSQL (<code>localhost:5432</code>, <code>oee_bi</code>, usuario <code>oee_bi</code>), modo
+  Import. Credenciales fuera del proyecto.</li>
+<li>Modelo con 7 dimensiones, 2 hechos, 2 vistas agregadas y tabla <code>_Medidas</code>.</li>
+</ul>
+<h3 id="82-medidas-dax">8.2 Medidas DAX</h3>
+<p><code>OEE %</code>, <code>Disponibilidad %</code>, <code>Rendimiento %</code>, <code>Calidad %</code>, <code>OEE YTD %</code>,
+<code>OEE Año Anterior %</code>, <code>Var OEE YoY pp/%</code>, <code>Horas Paro</code>, <code>Eventos Paro</code>,
+<code>MTBF (h)</code>, <code>MTTR (h)</code>, <code>Cobertura Referencia %</code>, <code>Pareto % Acumulado</code>,
+<code>Semáforo OEE</code>, <code>OEE vs Meta pp</code>.</p>
+<p>La inteligencia de tiempo se apoya en <code>dim_tiempo</code> marcada como tabla de fechas
+y <code>TOTALYTD</code> / <code>SAMEPERIODLASTYEAR</code>.</p>
+<h3 id="83-paginas-slicers-y-drill">8.3 Páginas, slicers y drill</h3>
+<ol>
+<li>Resumen ejecutivo.</li>
+<li>Análisis por máquina.</li>
+<li>Pareto de paros (drill-down código → subcódigo; drill-through a detalle).</li>
+<li>Turnos y referencias.</li>
+<li>Detalle de paros.</li>
+</ol>
+<h3 id="84-rls">8.4 RLS</h3>
+<p>Roles <code>Supervisor_Vinilos_1..4</code> con filtro en <code>dim_maquina[codigo]</code> y
+<code>Gerencia</code> sin filtro. El filtro se propaga a los hechos.</p>
+<h3 id="85-capturas-maqueta-de-diseno-con-datos-reales">8.5 Capturas (maqueta de diseño con datos reales)</h3>
+<p><img alt="Resumen ejecutivo Power BI" src="img/powerbi_resumen.png" /></p>
+<p><img alt="Pareto Power BI" src="img/powerbi_pareto.png" /></p>
+<blockquote>
+<p>Las capturas nativas deben generarse al abrir <code>powerbi/OEE_Vinilos.pbip</code> en
+Power BI Desktop (Windows). La maqueta usa la misma narrativa y los datos del
+ETL.</p>
+</blockquote>
+<p>Ver <a href="../documentacion/08_powerbi.md"><code>documentacion/08_powerbi.md</code></a>.</p>
+<hr />
+<h2 id="9-arquitectura-y-comparativo-grafana-vs-power-bi">9. Arquitectura y comparativo Grafana vs Power BI</h2>
+<pre><code class="language-mermaid">flowchart LR
+    X[&quot;.xlsm&quot;] --&gt; ETL[&quot;ETL Python&quot;]
+    ETL --&gt; PG[&quot;PostgreSQL 16&quot;]
+    PG --&gt; G[&quot;Grafana\nnear real-time&quot;]
+    PG --&gt; P[&quot;Power BI\nestratégico&quot;]
+    SIM[&quot;Simulador&quot;] --&gt; PG
+    G --&gt;|webhook| A[&quot;audit.alertas&quot;]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Dimensión</th>
+<th>Grafana</th>
+<th>Power BI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pregunta</td>
+<td>¿Qué pasa ahora?</td>
+<td>¿Qué pasó y por qué?</td>
+</tr>
+<tr>
+<td>Usuario</td>
+<td>Supervisor, mantenimiento</td>
+<td>Gerencia, jefatura</td>
+</tr>
+<tr>
+<td>Frecuencia</td>
+<td>10 s–1 min</td>
+<td>Diaria/mensual</td>
+</tr>
+<tr>
+<td>Fortaleza</td>
+<td>Series, estado, alertas</td>
+<td>Modelo, DAX, RLS, narrativa</td>
+</tr>
+<tr>
+<td>¿Intercambiables?</td>
+<td><strong>No</strong></td>
+<td><strong>No</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por qué no son intercambiables:</strong> Grafana no ofrece un modelo semántico ni DAX
+para el comité; Power BI no está diseñado para refresco subminuto ni alertas
+operativas nativas. Se complementan sobre el mismo dato.</p>
+<p>Ver <a href="../documentacion/09_arquitectura_seguridad.md"><code>documentacion/09_arquitectura_seguridad.md</code></a>.</p>
+<hr />
+<h2 id="10-gobierno-y-seguridad">10. Gobierno y seguridad</h2>
+<ul>
+<li><strong>PII</strong>: seudonimización SHA-256 + sal; sin nombres reales en la base; texto
+  libre redactado.</li>
+<li><strong>Roles PostgreSQL</strong>: <code>oee_etl</code> (RW), <code>oee_bi</code> (RO), <code>oee_grafana</code> (RO),
+  <code>oee_admin</code> (DDL).</li>
+<li><strong>Power BI RLS</strong> por línea; <strong>Grafana</strong> autenticación y datasource de solo
+  lectura.</li>
+<li><strong>Secretos</strong>: <code>.env</code> (600) + <code>.env.example</code>; <code>.gitignore</code> excluye <code>docs/</code>,
+  <code>data/raw</code>, <code>.env</code>, <code>.pbix</code>.</li>
+<li><strong>Auditoría</strong>: <code>etl_run</code>, <code>etl_quality</code>, <code>etl_reconciliacion</code>,
+  <code>alertas_recibidas</code>.</li>
+</ul>
+<hr />
+<h2 id="11-evolucion-a-plc-scada">11. Evolución a PLC / SCADA</h2>
+<p>Si el dato llega de PLC/SCADA, se mantiene el modelo dimensional y cambia la
+ingesta:</p>
+<ul>
+<li><strong>OPC UA</strong> en el edge → <strong>MQTT</strong> → procesador (Faust/Kafka Streams).</li>
+<li><strong>TimescaleDB/InfluxDB</strong> para series; PostgreSQL para dimensiones/hechos.</li>
+<li>OEE por minuto, microparos, velocidad real vs ideal y calidad si se integra
+  un sensor de rechazos.</li>
+<li>Alertas en &lt; 10 s; retención caliente 90 días y agregados continuos.</li>
+<li>Riesgos: ciberseguridad OT/IT, relojes/NTP, buffer store-and-forward,
+  reinicio de contadores.</li>
+</ul>
+<p>Ver <a href="../documentacion/10_evolucion_scada.md"><code>documentacion/10_evolucion_scada.md</code></a>.</p>
+<hr />
+<h2 id="12-repositorio-y-reproduccion">12. Repositorio y reproducción</h2>
+<pre><code class="language-bash">cp .env.example .env          # cambiar credenciales y PII_SALT
+mkdir -p data/raw             # copiar el .xlsm y el PDF
+make up                       # PostgreSQL + Grafana
+make etl                      # carga + calidad + conciliación
+make sim                      # simulador + webhook
+make test                     # 7 pruebas unitarias
+</code></pre>
+<p>Estructura, comandos y troubleshooting en <a href="../README.md"><code>README.md</code></a>.</p>
+<p><strong>Git:</strong> el repositorio incluye commits por fase (diagnóstico, modelo, DDL, ETL,
+Grafana, Power BI, docs). <code>docs/</code>, <code>data/raw/</code>, <code>.env</code> y <code>.pbix</code> están ignorados.</p>
+<hr />
+<h2 id="13-conclusiones-y-recomendaciones">13. Conclusiones y recomendaciones</h2>
+<ol>
+<li><strong>Priorizar Vinilos_2</strong>: su OEE (33,7 %) está muy por debajo del resto;
+   el rendimiento (55,8 %) es el principal cuello de botella. Revisar el estándar
+   de 72 u/min y la dosificación/transfer.</li>
+<li><strong>Atacar las causas operativas</strong>: 16 (alimentación/aseo), 5 (ajuste) y 6
+   (limpieza) explican ~73 % de las horas en 2024. Un plan de 5S/estándar de ajuste
+   puede mover el OEE más que el mantenimiento correctivo.</li>
+<li><strong>Completar la captura de referencia y turno</strong>: sin referencia no hay OEE
+   (cobertura 52,8 % en horas). Es la mejora de datos con mayor retorno.</li>
+<li><strong>Capturar rechazos</strong>: el OEE actual es un límite superior (Calidad = 100 %).
+   Añadir <code>unidades_rechazadas</code> al formato P-MTO-22.</li>
+<li><strong>Calibrar el estándar</strong>: 58 % de las observaciones superan 100 % de
+   rendimiento; el estándar de 72 u/min o la conversión unidades/paca están
+   subestimados. Usar <code>rendimiento_calculado</code> y un estudio de tiempos.</li>
+<li><strong>Sostener la disciplina de calidad</strong>: 42 duplicados y 3.051 filas hijas
+   evidencian la necesidad de validaciones en la captura (formulario/HMI).</li>
+</ol>
+<hr />
+<h2 id="14-checklist-de-cumplimiento-seccion-5">14. Checklist de cumplimiento (sección 5)</h2>
+<h3 id="51-analisis-y-requerimientos">5.1 Análisis y requerimientos</h3>
+<ul>
+<li>[x] Stakeholders y preguntas de negocio.</li>
+<li>[x] Diagnóstico de la fuente, calidad y limitaciones.</li>
+</ul>
+<h3 id="52-kpis">5.2 KPIs</h3>
+<ul>
+<li>[x] Catálogo con fórmula, unidad, granularidad, meta, fuente y usuario.</li>
+<li>[x] Indicadores actuales del P-MTO-22.</li>
+<li>[x] KPIs nuevos justificados (OEE, A/P/Q, MTBF, MTTR, Pareto, cobertura).</li>
+</ul>
+<h3 id="53-modelado-dimensional">5.3 Modelado dimensional</h3>
+<ul>
+<li>[x] Estrella/constelación justificada.</li>
+<li>[x] Grano declarado por tabla.</li>
+<li>[x] Dimensiones, atributos y jerarquías; dimensión construida (<code>dim_tiempo</code>).</li>
+<li>[x] Jerarquía de paros código → subcódigo → sub-subcódigo.</li>
+<li>[x] Matriz de bus.</li>
+<li>[x] SCD Tipo 2 en <code>dim_referencia</code> justificada.</li>
+</ul>
+<h3 id="54-diccionario">5.4 Diccionario</h3>
+<ul>
+<li>[x] Descripción, columnas, tipos, PK/FK, reglas y lineage.</li>
+</ul>
+<h3 id="55-etl">5.5 ETL</h3>
+<ul>
+<li>[x] Extracción, limpieza, transformación y carga.</li>
+<li>[x] Herramienta justificada.</li>
+<li>[x] Reglas y conteos antes/después.</li>
+<li>[x] Conciliación de horas, unidades y paro.</li>
+<li>[x] Reproducible con <code>make etl</code>.</li>
+</ul>
+<h3 id="56-base-de-datos">5.6 Base de datos</h3>
+<ul>
+<li>[x] DDL PostgreSQL administrable desde DBeaver.</li>
+<li>[x] Restricciones e índices justificados.</li>
+<li>[x] Consultas con agregaciones, <code>RANK</code>, <code>LAG</code>, <code>SUM() OVER</code> y comparativos.</li>
+</ul>
+<h3 id="57-power-bi">5.7 Power BI</h3>
+<ul>
+<li>[x] Conexión a la base (no al Excel).</li>
+<li>[x] Modelo semántico, relaciones y DAX con inteligencia de tiempo.</li>
+<li>[x] 5 páginas, slicers, drill-down/drill-through.</li>
+<li>[x] Pareto.</li>
+<li>[x] Diseño y narrativa.</li>
+</ul>
+<h3 id="58-grafana">5.8 Grafana</h3>
+<ul>
+<li>[x] Conexión a PostgreSQL.</li>
+<li>[x] Series de tiempo y estado actual por máquina.</li>
+<li>[x] Variables de tablero.</li>
+<li>[x] Alerta con umbral justificado.</li>
+<li>[x] Simulación hora a hora y evidencia de reacción.</li>
+</ul>
+<h3 id="59-arquitectura-y-analisis">5.9 Arquitectura y análisis</h3>
+<ul>
+<li>[x] Diagrama de arquitectura.</li>
+<li>[x] Comparativo Grafana vs Power BI.</li>
+<li>[x] Evolución PLC/SCADA/OPC UA/MQTT/series de tiempo.</li>
+</ul>
+<h3 id="510-gobierno-y-seguridad">5.10 Gobierno y seguridad</h3>
+<ul>
+<li>[x] PII seudonimizada, minimización y acceso.</li>
+<li>[x] Roles, autenticación, RLS y secretos.</li>
+</ul>
+<h3 id="6-repositorio">6. Repositorio</h3>
+<ul>
+<li>[x] README con arquitectura y reproducción.</li>
+<li>[x] SQL, ETL, JSON de Grafana y PBIP/PBIR.</li>
+<li>[x] Formato Power BI versionable justificado.</li>
+<li>[x] <code>.env.example</code> y <code>.gitignore</code>; sin credenciales.</li>
+<li>[x] Historial de commits (ver <code>git log</code>).</li>
+<li>[x] Estructura de carpetas propuesta.</li>
+</ul>
+<hr />
+<h2 id="anexos">Anexos</h2>
+<table>
+<thead>
+<tr>
+<th>Recurso</th>
+<th>Ruta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diagnóstico</td>
+<td><a href="../documentacion/01_diagnostico.md"><code>documentacion/01_diagnostico.md</code></a></td>
+</tr>
+<tr>
+<td>KPIs</td>
+<td><a href="../documentacion/02_requerimientos_kpis.md"><code>documentacion/02_requerimientos_kpis.md</code></a></td>
+</tr>
+<tr>
+<td>Modelo</td>
+<td><a href="../documentacion/03_modelo_dimensional.md"><code>documentacion/03_modelo_dimensional.md</code></a></td>
+</tr>
+<tr>
+<td>Diccionario</td>
+<td><a href="../documentacion/04_diccionario_datos.md"><code>documentacion/04_diccionario_datos.md</code></a></td>
+</tr>
+<tr>
+<td>ETL/calidad</td>
+<td><a href="../documentacion/05_etl_calidad.md"><code>documentacion/05_etl_calidad.md</code></a></td>
+</tr>
+<tr>
+<td>SQL</td>
+<td><a href="../documentacion/06_consultas_sql.md"><code>documentacion/06_consultas_sql.md</code></a></td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><a href="../documentacion/07_grafana.md"><code>documentacion/07_grafana.md</code></a></td>
+</tr>
+<tr>
+<td>Power BI</td>
+<td><a href="../documentacion/08_powerbi.md"><code>documentacion/08_powerbi.md</code></a></td>
+</tr>
+<tr>
+<td>Seguridad</td>
+<td><a href="../documentacion/09_arquitectura_seguridad.md"><code>documentacion/09_arquitectura_seguridad.md</code></a></td>
+</tr>
+<tr>
+<td>SCADA</td>
+<td><a href="../documentacion/10_evolucion_scada.md"><code>documentacion/10_evolucion_scada.md</code></a></td>
+</tr>
+<tr>
+<td>DDL</td>
+<td><a href="../db/init/01_schema.sql"><code>db/init/01_schema.sql</code></a></td>
+</tr>
+<tr>
+<td>Consultas</td>
+<td><a href="../db/queries/"><code>db/queries/</code></a></td>
+</tr>
+<tr>
+<td>Dashboard Grafana</td>
+<td><a href="../grafana/dashboards/oee_operativo.json"><code>grafana/dashboards/oee_operativo.json</code></a></td>
+</tr>
+<tr>
+<td>Proyecto Power BI</td>
+<td><a href="../powerbi/OEE_Vinilos.pbip"><code>powerbi/OEE_Vinilos.pbip</code></a></td>
+</tr>
+<tr>
+<td>Medidas DAX</td>
+<td><a href="../powerbi/DAX_medidas.md"><code>powerbi/DAX_medidas.md</code></a></td>
+</tr>
+</tbody>
+</table></body></html>

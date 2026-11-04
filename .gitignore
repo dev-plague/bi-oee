@@ -12,6 +12,7 @@ data/private/*
 *.xlsx
 *.xls
 *.pdf
+!informe/informe.pdf
 
 # ============================================================
 # Secretos y configuración local
