@@ -1,0 +1,16 @@
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: OEE Webhook
+    group_by:
+      - alertname
+      - maquina
+    group_wait: 10s
+    group_interval: 30s
+    repeat_interval: 1m
+    routes:
+      - receiver: OEE Webhook
+        object_matchers:
+          - ["severity", "=", "warning"]
+        continue: false

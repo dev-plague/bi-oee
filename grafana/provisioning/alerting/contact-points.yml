@@ -1,0 +1,13 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: OEE Webhook
+    receivers:
+      - uid: oee-webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://simulator:8080/alerts
+          httpMethod: POST
+          maxAlerts: 10

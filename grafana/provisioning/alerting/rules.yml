@@ -1,0 +1,216 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: OEE Operativo
+    folder: OEE Alertas
+    folderUid: oee-alertas-folder
+    interval: 30s
+    rules:
+      - uid: oee-bajo-v1
+        title: OEE bajo - Vinilos_1
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: oee-postgres
+            model:
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT COALESCE(
+                         SUM(f.unidades_producidas)
+                         / NULLIF(SUM(f.minutos_planificados) * 72, 0),
+                         0
+                       ) AS oee
+                FROM oee.fact_produccion_hora f
+                JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key
+                WHERE m.codigo = 'Vinilos_1'
+                  AND f.ts_hora >= NOW() - INTERVAL '10 minutes'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              type: reduce
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              expression: B
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [0.6]
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: warning
+          equipo: oee
+          maquina: Vinilos_1
+        annotations:
+          summary: "OEE bajo en Vinilos_1"
+          description: "El OEE de Vinilos_1 está por debajo del 60 % durante 1 minuto."
+
+      - uid: oee-bajo-v2
+        title: OEE bajo - Vinilos_2
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: oee-postgres
+            model:
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT COALESCE(
+                         SUM(f.unidades_producidas)
+                         / NULLIF(SUM(f.minutos_planificados) * 72, 0),
+                         0
+                       ) AS oee
+                FROM oee.fact_produccion_hora f
+                JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key
+                WHERE m.codigo = 'Vinilos_2'
+                  AND f.ts_hora >= NOW() - INTERVAL '10 minutes'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              type: reduce
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              expression: B
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [0.6]
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: warning
+          equipo: oee
+          maquina: Vinilos_2
+        annotations:
+          summary: "OEE bajo en Vinilos_2"
+          description: "El OEE de Vinilos_2 está por debajo del 60 % durante 1 minuto."
+
+      - uid: oee-bajo-v3
+        title: OEE bajo - Vinilos_3
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: oee-postgres
+            model:
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT COALESCE(
+                         SUM(f.unidades_producidas)
+                         / NULLIF(SUM(f.minutos_planificados) * 72, 0),
+                         0
+                       ) AS oee
+                FROM oee.fact_produccion_hora f
+                JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key
+                WHERE m.codigo = 'Vinilos_3'
+                  AND f.ts_hora >= NOW() - INTERVAL '10 minutes'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              type: reduce
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              expression: B
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [0.6]
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: warning
+          equipo: oee
+          maquina: Vinilos_3
+        annotations:
+          summary: "OEE bajo en Vinilos_3"
+          description: "El OEE de Vinilos_3 está por debajo del 60 % durante 1 minuto."
+
+      - uid: oee-bajo-v4
+        title: OEE bajo - Vinilos_4
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: oee-postgres
+            model:
+              editorMode: code
+              format: table
+              rawQuery: true
+              rawSql: |
+                SELECT COALESCE(
+                         SUM(f.unidades_producidas)
+                         / NULLIF(SUM(f.minutos_planificados) * 72, 0),
+                         0
+                       ) AS oee
+                FROM oee.fact_produccion_hora f
+                JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key
+                WHERE m.codigo = 'Vinilos_4'
+                  AND f.ts_hora >= NOW() - INTERVAL '10 minutes'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              expression: A
+              reducer: last
+              type: reduce
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              expression: B
+              type: threshold
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [0.6]
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: warning
+          equipo: oee
+          maquina: Vinilos_4
+        annotations:
+          summary: "OEE bajo en Vinilos_4"
+          description: "El OEE de Vinilos_4 está por debajo del 60 % durante 1 minuto."

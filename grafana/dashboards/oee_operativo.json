@@ -1,0 +1,801 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "OEE global (15 min)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(\n                 SUM(f.unidades_producidas) / NULLIF(SUM(f.minutos_planificados) * 72, 0),\n                 0\n               ) AS oee\n        FROM oee.fact_produccion_hora f\n        JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key\n        WHERE f.ts_hora >= NOW() - INTERVAL '15 minutes'\n          AND m.codigo IN (${maquina:sqlstring})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.6
+              },
+              {
+                "color": "yellow",
+                "value": 0.75
+              },
+              {
+                "color": "green",
+                "value": 0.85
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "id": 1
+    },
+    {
+      "type": "stat",
+      "title": "Disponibilidad (15 min)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(\n                 SUM(f.minutos_operacion) / NULLIF(SUM(f.minutos_planificados), 0),\n                 0\n               ) AS disponibilidad\n        FROM oee.fact_produccion_hora f\n        JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key\n        WHERE f.ts_hora >= NOW() - INTERVAL '15 minutes'\n          AND m.codigo IN (${maquina:sqlstring})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.6
+              },
+              {
+                "color": "yellow",
+                "value": 0.75
+              },
+              {
+                "color": "green",
+                "value": 0.85
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "id": 2
+    },
+    {
+      "type": "stat",
+      "title": "Rendimiento (15 min)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(\n                 SUM(f.unidades_producidas) / NULLIF(SUM(f.minutos_operacion) * 72, 0),\n                 0\n               ) AS rendimiento\n        FROM oee.fact_produccion_hora f\n        JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key\n        WHERE f.ts_hora >= NOW() - INTERVAL '15 minutes'\n          AND m.codigo IN (${maquina:sqlstring})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.6
+              },
+              {
+                "color": "yellow",
+                "value": 0.75
+              },
+              {
+                "color": "green",
+                "value": 0.85
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "id": 3
+    },
+    {
+      "type": "stat",
+      "title": "Paro acumulado (15 min)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 15,
+        "y": 0,
+        "w": 4,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(SUM(f.minutos_paro), 0) AS minutos_paro\n        FROM oee.fact_produccion_hora f\n        JOIN oee.dim_maquina m ON m.maquina_key = f.maquina_key\n        WHERE f.ts_hora >= NOW() - INTERVAL '15 minutes'\n          AND m.codigo IN (${maquina:sqlstring})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "min": 0,
+          "max": null,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 15
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "id": 4
+    },
+    {
+      "type": "stat",
+      "title": "Alertas (1 h)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 19,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS alertas\n        FROM oee.vw_alertas_recientes\n        WHERE recibido_en >= NOW() - INTERVAL '1 hour'"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": null,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "id": 5
+    },
+    {
+      "type": "timeseries",
+      "title": "OEE por máquina (near real-time)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 14,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hora AS \"time\", maquina AS metric, oee\n        FROM oee.vw_oee_hora\n        WHERE $__timeFilter(hora)\n          AND maquina IN (${maquina:sqlstring})\n        ORDER BY 1"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 6
+    },
+    {
+      "type": "table",
+      "title": "Estado actual por máquina",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 14,
+        "y": 6,
+        "w": 10,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT maquina,\n               estado,\n               ROUND(oee * 100, 1)            AS \"OEE %\",\n               ROUND(disponibilidad * 100, 1) AS \"Disp %\",\n               ROUND(rendimiento * 100, 1)    AS \"Rend %\",\n               ROUND(minutos_paro, 1)         AS \"Paro min\",\n               ultima_actualizacion\n        FROM oee.vw_estado_actual_maquina\n        WHERE maquina IN (${maquina:sqlstring})\n        ORDER BY maquina"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "countRows": false,
+          "fields": ""
+        }
+      },
+      "id": 7
+    },
+    {
+      "type": "barchart",
+      "title": "Pareto de causas de paro (histórico)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 10,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT LEFT(c.nombre, 34) AS causa,\n               ROUND(SUM(f.horas_paro)::numeric, 2) AS horas\n        FROM oee.fact_paro f\n        JOIN oee.dim_codigo_paro c ON c.codigo_key = f.codigo_key\n        WHERE f.tiempo_key >= TO_CHAR(($__timeFrom())::timestamptz, 'YYYYMMDD')::integer\n          AND f.tiempo_key <= TO_CHAR(($__timeTo())::timestamptz, 'YYYYMMDD')::integer\n          AND f.maquina_key IN (\n              SELECT maquina_key FROM oee.dim_maquina\n              WHERE codigo IN (${maquina:sqlstring})\n          )\n        GROUP BY c.nombre\n        ORDER BY horas DESC\n        LIMIT 10"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "xField": "causa",
+        "yField": "horas",
+        "showValue": "auto",
+        "stacking": "none",
+        "legend": {
+          "show": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "timeFrom": "5y",
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "Minutos de paro por máquina",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 15,
+        "w": 14,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT hora AS \"time\", maquina AS metric, minutos_paro\n        FROM oee.vw_oee_hora\n        WHERE $__timeFilter(hora)\n          AND maquina IN (${maquina:sqlstring})\n        ORDER BY 1"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "m",
+          "min": 0,
+          "max": null,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 9
+    },
+    {
+      "type": "barchart",
+      "title": "OEE por turno (histórico)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT turno,\n               ROUND(\n                 (SUM(horas_operativas_ref) / NULLIF(SUM(horas_trabajadas_ref), 0))\n                 * LEAST(SUM(unidades_producidas) / NULLIF(SUM(minutos_ideales_operativos), 0), 1.0)\n                 * 100, 1\n               ) AS \"OEE %\"\n        FROM oee.vw_oee_turno\n        WHERE turno IN (${turno:sqlstring})\n          AND periodo_anio_mes >= TO_CHAR(($__timeFrom())::timestamptz, 'YYYY-MM')\n        GROUP BY turno\n        ORDER BY \"OEE %\" DESC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "xField": "turno",
+        "yField": "OEE %",
+        "showValue": "auto",
+        "stacking": "none",
+        "legend": {
+          "show": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "timeFrom": "5y",
+      "id": 10
+    },
+    {
+      "type": "table",
+      "title": "Últimas alertas recibidas",
+      "datasource": {
+        "type": "postgres",
+        "uid": "oee-postgres"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "oee-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT recibido_en   AS \"Recibido\",\n               estado        AS \"Estado\",\n               regla         AS \"Regla\",\n               maquina       AS \"Máquina\",\n               valor         AS \"Valor\"\n        FROM oee.vw_alertas_recientes\n        ORDER BY recibido_en DESC\n        LIMIT 20"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "countRows": false,
+          "fields": ""
+        }
+      },
+      "id": 11
+    },
+    {
+      "type": "text",
+      "title": "Cómo leer este tablero",
+      "gridPos": {
+        "x": 16,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**OEE = Disponibilidad × Rendimiento × Calidad**\n\n- **Disponibilidad** = minutos operativos / minutos planificados.\n- **Rendimiento** = unidades producidas / (minutos operativos × 72 u/min).\n- **Calidad** = 1,00 (la fuente no captura rechazos; ver informe).\n\n**Umbrales:** OEE < 60 % durante 1 minuto dispara alerta *warning*; la meta es 75 % y el mundo clase es 85 %. El Pareto usa los últimos 90 días y se filtra con la variable de máquina."
+      },
+      "targets": [],
+      "id": 12
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [
+    "OEE",
+    "Manufactura",
+    "Near real-time"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "maquina",
+        "label": "Máquina",
+        "type": "query",
+        "datasource": {
+          "type": "postgres",
+          "uid": "oee-postgres"
+        },
+        "definition": "SELECT codigo FROM oee.dim_maquina ORDER BY 1",
+        "query": "SELECT codigo FROM oee.dim_maquina ORDER BY 1",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": []
+      },
+      {
+        "name": "turno",
+        "label": "Turno",
+        "type": "query",
+        "datasource": {
+          "type": "postgres",
+          "uid": "oee-postgres"
+        },
+        "definition": "SELECT codigo FROM oee.dim_turno WHERE es_valido ORDER BY 1",
+        "query": "SELECT codigo FROM oee.dim_turno WHERE es_valido ORDER BY 1",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": []
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "OEE Envasado — Operación near real-time",
+  "uid": "oee-operativo",
+  "version": 1,
+  "weekStart": ""
+}
