@@ -1,0 +1,125 @@
+name: oee-bi
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: oee-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-oee_bi}
+      POSTGRES_USER: ${POSTGRES_USER:-oee_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Definir POSTGRES_PASSWORD en .env}
+      OEE_ETL_PASSWORD: ${OEE_ETL_PASSWORD:?Definir OEE_ETL_PASSWORD en .env}
+      OEE_BI_PASSWORD: ${OEE_BI_PASSWORD:?Definir OEE_BI_PASSWORD en .env}
+      OEE_GRAFANA_PASSWORD: ${OEE_GRAFANA_PASSWORD:?Definir OEE_GRAFANA_PASSWORD en .env}
+      TZ: America/Bogota
+      PGTZ: America/Bogota
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  etl:
+    build:
+      context: ./etl
+    container_name: oee-etl
+    profiles: ["tools"]
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-oee_bi}
+      DB_USER: oee_etl
+      DB_PASSWORD: ${OEE_ETL_PASSWORD}
+      DATA_DIR: /data
+      SOURCE_XLSM: ${SOURCE_XLSM:-/data/raw/SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm}
+      PII_SALT: ${PII_SALT:?Definir PII_SALT en .env}
+    volumes:
+      - ./data:/data
+      - ./etl:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["python", "run_etl.py"]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: oee-grafana
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Definir GRAFANA_ADMIN_PASSWORD en .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_ALERTING_ENABLED: "true"
+      GF_UNIFIED_ALERTING_ENABLED: "true"
+      GF_SERVER_ROOT_URL: http://localhost:${GRAFANA_PORT:-3000}
+      GF_SECURITY_COOKIE_SECURE: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      POSTGRES_DB: ${POSTGRES_DB:-oee_bi}
+      OEE_GRAFANA_PASSWORD: ${OEE_GRAFANA_PASSWORD}
+      TZ: America/Bogota
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  simulator:
+    build:
+      context: ./etl
+    container_name: oee-simulator
+    profiles: ["sim"]
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-oee_bi}
+      DB_USER: oee_etl
+      DB_PASSWORD: ${OEE_ETL_PASSWORD}
+      SIM_INTERVAL: ${SIM_INTERVAL:-2}
+      SIM_ANOMALY_PROB: ${SIM_ANOMALY_PROB:-0.05}
+    volumes:
+      - ./data:/data
+      - ./etl:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["python", "simulate_realtime.py", "--serve-alerts"]
+
+  adminer:
+    image: adminer:latest
+    container_name: oee-adminer
+    profiles: ["tools"]
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: pepa-linha
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  grafana_data:
