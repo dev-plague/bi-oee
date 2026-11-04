@@ -199,7 +199,7 @@ reproducibilidad.
 |---|---:|---:|---:|
 | Filas | 8.208 | 8.166 | −42 |
 | Registros de producción | 5.157 | 5.137 | −20 |
-| Eventos de paro | 16.482 | 16.482 | 0 |
+| Eventos de paro | 16.532 | 16.482 | −50 |
 | Pacas | 378.778 | 377.759 | −1.019 |
 | Horas trabajadas | 38.063,35 | 37.934,35 | −129,00 |
 | Horas de paro | 8.449,65 | 8.431,54 | −18,12 |

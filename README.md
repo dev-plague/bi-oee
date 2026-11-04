@@ -182,7 +182,7 @@ make test
 |---|---:|---:|---:|---:|
 | Filas | 8.208 | 8.166 | 8.166 staging | 0 |
 | Registros de producción | 5.157 | 5.137 | 5.137 | 0 |
-| Eventos de paro | 16.482 | 16.482 | 16.482 | 0 |
+| Eventos de paro | 16.532 | 16.482 | 16.482 | −50 (50 eventos en filas duplicadas) |
 | Pacas producidas | 378.778 | 377.759 | 377.759 | 0 |
 | Horas trabajadas | 38.063,35 | 37.934,35 | 37.934,35 | 0 |
 | Horas de paro | 8.449,65 | 8.431,54 | 8.431,54 | 0 |

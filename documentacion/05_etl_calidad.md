@@ -62,7 +62,7 @@ flowchart LR
 |---|---:|---:|---:|---|
 | Filas | 8.208 | 8.166 | −42 | Duplicados exactos. |
 | Registros de producción | 5.157 | 5.137 | −20 | 22 filas de producción duplicadas, pero 2 filas con horas y sin pacas se incorporan. |
-| Eventos de paro | 16.482 | 16.482 | 0 | Los duplicados de paro venían dentro de filas ya contadas; el conteo final coincide. |
+| Eventos de paro | 16.532 | 16.482 | −50 | Los 42 duplicados contenían 50 eventos de paro. |
 | Pacas | 378.778 | 377.759 | −1.019 | Duplicados. |
 | Horas trabajadas | 38.063,35 | 37.934,35 | −129,00 | Duplicados. |
 | Horas de paro | 8.449,65 | 8.431,54 | −18,12 | Duplicados. |
