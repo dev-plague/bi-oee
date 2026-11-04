@@ -6,8 +6,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Integrantes** | _Completar nombre 1_ <br> _Completar nombre 2_ <br> _Completar nombre 3_ |
-| **Repositorio** | `https://github.com/<usuario>/oee-envasado-bi` _(reemplazar al publicar)_ |
+| **Integrantes** | **Alejandro Ramírez** |
+| **Repositorio** | https://github.com/dev-plague/bi-oee |
 | **Fecha** | Noviembre de 2026 |
 | **Fuente** | `SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm` + P-MTO-22 |
 | **Stack** | PostgreSQL 16 · Python/pandas · Docker Compose · Grafana 11 · Power BI (PBIP/PBIR) |
@@ -500,6 +500,3 @@ Grafana, Power BI, docs). `docs/`, `data/raw/`, `.env` y `.pbix` están ignorado
 | Dashboard Grafana | [`grafana/dashboards/oee_operativo.json`](../grafana/dashboards/oee_operativo.json) |
 | Proyecto Power BI | [`powerbi/OEE_Vinilos.pbip`](../powerbi/OEE_Vinilos.pbip) |
 | Medidas DAX | [`powerbi/DAX_medidas.md`](../powerbi/DAX_medidas.md) |
-| Presentación de 15 min | [`informe/presentacion_oee.pptx`](presentacion_oee.pptx) |
-| Guion de exposición | [`documentacion/12_guion_exposicion.md`](../documentacion/12_guion_exposicion.md) |
-| Cuestionario de práctica | [`documentacion/13_cuestionario_practica.md`](../documentacion/13_cuestionario_practica.md) |

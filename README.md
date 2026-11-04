@@ -228,11 +228,10 @@ de las filas. Ver `documentacion/05_etl_calidad.md`.
 | `documentacion/08_powerbi.md` | Modelo semántico, DAX, páginas, RLS y formato PBIP/PBIR. |
 | `documentacion/09_arquitectura_seguridad.md` | Arquitectura, Grafana vs Power BI, gobierno, PII y seguridad. |
 | `documentacion/10_evolucion_scada.md` | Evolución a PLC/SCADA, OPC UA/MQTT, streaming y series de tiempo. |
-| `documentacion/11_guia_apropiacion.md` | **Guía interna para dominar el proyecto**: data, métricas, accesos, demo y preguntas del jurado. |
-| `documentacion/12_guion_exposicion.md` | **Guion de exposición de 15 minutos**, diapositiva por diapositiva, con tiempos y transiciones. |
-| `documentacion/13_cuestionario_practica.md` | **Cuestionario de práctica** con respuestas, preguntas trampa y autoevaluación. |
-| `informe/presentacion_oee.pptx` | **Presentación de 15 minutos** (15 diapositivas) con notas del expositor. |
 | `informe/informe.md` | Informe final con portada, capturas y checklist. |
+
+> Los documentos internos de apropiación, guion de exposición y cuestionario de
+> práctica viven en `docs/interno/` y **no se versionan** (ver `.gitignore`).
 
 ---
 
@@ -274,8 +273,6 @@ de las filas. Ver `documentacion/05_etl_calidad.md`.
 
 | Nombre | Rol |
 |---|---|
-| _Completar_ | _Completar_ |
-| _Completar_ | _Completar_ |
-| _Completar_ | _Completar_ |
+| **Alejandro Ramírez** | Data Engineering, ETL, modelado dimensional, Grafana, Power BI y documentación. |
 
-**Repositorio:** _completar con la URL de GitHub al publicar_.
+**Repositorio:** https://github.com/dev-plague/bi-oee
