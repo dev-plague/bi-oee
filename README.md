@@ -228,6 +228,7 @@ de las filas. Ver `documentacion/05_etl_calidad.md`.
 | `documentacion/08_powerbi.md` | Modelo semántico, DAX, páginas, RLS y formato PBIP/PBIR. |
 | `documentacion/09_arquitectura_seguridad.md` | Arquitectura, Grafana vs Power BI, gobierno, PII y seguridad. |
 | `documentacion/10_evolucion_scada.md` | Evolución a PLC/SCADA, OPC UA/MQTT, streaming y series de tiempo. |
+| `documentacion/11_guia_apropiacion.md` | **Guía interna para dominar el proyecto**: data, métricas, accesos, demo y preguntas del jurado. |
 | `informe/informe.md` | Informe final con portada, capturas y checklist. |
 
 ---
