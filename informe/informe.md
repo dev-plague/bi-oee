@@ -500,3 +500,6 @@ Grafana, Power BI, docs). `docs/`, `data/raw/`, `.env` y `.pbix` están ignorado
 | Dashboard Grafana | [`grafana/dashboards/oee_operativo.json`](../grafana/dashboards/oee_operativo.json) |
 | Proyecto Power BI | [`powerbi/OEE_Vinilos.pbip`](../powerbi/OEE_Vinilos.pbip) |
 | Medidas DAX | [`powerbi/DAX_medidas.md`](../powerbi/DAX_medidas.md) |
+| Presentación de 15 min | [`informe/presentacion_oee.pptx`](presentacion_oee.pptx) |
+| Guion de exposición | [`documentacion/12_guion_exposicion.md`](../documentacion/12_guion_exposicion.md) |
+| Cuestionario de práctica | [`documentacion/13_cuestionario_practica.md`](../documentacion/13_cuestionario_practica.md) |
