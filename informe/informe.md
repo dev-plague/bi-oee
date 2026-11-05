@@ -6,7 +6,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Integrantes** | **Alejandro Ramírez** |
+| **Integrantes** | **Alejandro Ramírez** <br> **Carolina Álvarez** |
 | **Repositorio** | https://github.com/dev-plague/bi-oee |
 | **Fecha** | Noviembre de 2026 |
 | **Fuente** | `SEGUIMIENTO TEMPERAS Y VINILOS Actividad.xlsm` + P-MTO-22 |

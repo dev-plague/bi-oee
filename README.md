@@ -274,5 +274,6 @@ de las filas. Ver `documentacion/05_etl_calidad.md`.
 | Nombre | Rol |
 |---|---|
 | **Alejandro Ramírez** | Data Engineering, ETL, modelado dimensional, Grafana, Power BI y documentación. |
+| **Carolina Álvarez** | Integrante del equipo. |
 
 **Repositorio:** https://github.com/dev-plague/bi-oee
